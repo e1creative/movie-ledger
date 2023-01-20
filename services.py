@@ -6,6 +6,10 @@ import requests
 # from keys import API_KEY
 API_KEY = os.environ.get('API_KEY')
 
+print("\n***********")
+print("API KEY: ", API_KEY)
+print("***********\n")
+
 API_BASE_URL = f"http://www.omdbapi.com/?apikey={API_KEY}&"
 
 def movie_search(search_term):
