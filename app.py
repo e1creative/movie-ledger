@@ -27,7 +27,7 @@ connect_db(app)
 toolbar = DebugToolbarExtension(app)
 
 CURR_USER_KEY = "curr_user"
-
+API_KEY = app.config.get('API_KEY')
 
 ###############################################################################
 # do this before every request!

@@ -2,7 +2,7 @@
 
 import requests
 
-from keys import API_KEY
+# from keys import API_KEY
 
 
 API_BASE_URL = f"http://www.omdbapi.com/?apikey={API_KEY}&"
