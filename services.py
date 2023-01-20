@@ -3,8 +3,8 @@
 import os
 import requests
 
-from keys import API_KEY
-# API_KEY = os.environ.get('API_KEY')
+# from keys import API_KEY
+API_KEY = os.environ.get('API_KEY')
 
 API_BASE_URL = f"http://www.omdbapi.com/?apikey={API_KEY}&"
 
