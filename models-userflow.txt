@@ -1,0 +1,39 @@
+
+Models
+User
+Register
+Signup
+Authenticate
+Add User
+Update user
+Add movie
+Delete Movie 
+Update Movie
+
+
+
+Views
+Home
+Signup
+Login
+User Profile
+Movie Search - frim here add a movie
+
+Endpoints
+User:
+Register
+Login
+Get User - get user info and movies - get our user and then all movies associated
+Update User
+Delete User
+
+
+Movie:
+Add Movie
+Delete Movie
+Update viewed or not viewed
+
+
+NOTE: created a search page as well as search results page so that a user doesn't have to make a new api call when going back to the search page from the movie details page
+
+NOTE: made the "add movie button" an ajax call so that the user can 

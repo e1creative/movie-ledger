@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block pagetitle %}Movie Ledger | Find a Movie{% endblock %}
+
+{% block pagecontent %}
+<h1>Movie Search</h1>
+<p>Enter a search term to find a movie!</p>
+<form id="movieSearchForm" class="ml__search-form" method="POST">
+    {{ form.hidden_tag() }}
+    {% for field in form if field.widget.input_type != 'hidden' %}
+    
+        <div>
+            {{ field.label }}
+            {{ field }}
+            {% for error in field.errors %}
+                <span class="error">{{ error}}</span>
+            {% endfor %}
+        </div>
+    
+    {% endfor %}
+    <button id="submitButton" type="submit">Search</button>
+</form>
+<div id="searchResults"></div>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="/static/js/movieSearch.js"></script>
+{% endblock %}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,200;0,600;1,400&display=swap" rel="stylesheet">
+    <title>{% block pagetitle %}{% endblock %}</title>
+</head>
+<body>
+    <div class="ml__main">
+        <header>
+            <nav>
+                <div class="nav-brand">
+                    <a href="/">TheMovieLedger</a>
+                </div>
+        
+                {% if g.user %}
+                    <div class="nav-links">
+                        <a href="/profile">My Movies</a>
+                        <a href="/movie/search">Movie Search</a>
+                        <a href="/profile/edit">Edit Profile</a>
+                    </div>
+                {% endif %}
+        
+                <div class="nav-links">
+                    {% if g.user %}
+                        <a href="/logout">Logout</a>
+                    {% else %}
+                        <a href="/login">Login</a>
+                        <a href="/signup">Signup</a>
+                    {% endif %}
+                </div>
+            </nav>
+        </header>
+
+        {% for category,msg in get_flashed_messages(with_categories=true) %}
+            <p class="flash {{ category }}">{{ msg }}</p>
+        {% endfor %}
+    
+        <main>
+            <section class="ml__content-container">
+                <div class="ml__content">
+                    {% block pagecontent %}{% endblock %}
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p class="copyright">© 2023 | The Movie Ledger</p>
+            <p class="credit">powered by the OMDB api</p>
+        </footer>
+    </div>
+</body>
+</html>

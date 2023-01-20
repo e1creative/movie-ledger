@@ -1,0 +1,221 @@
+@import url(normalize.css);
+
+* { box-sizing: border-box; }
+
+body {
+    /* background-image: url("/static/images/US-en-20230109-popsignuptwoweeks-perspective_alpha_website_large.jpg"); */
+    background-color: #111;
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    letter-spacing: .5px;
+    line-height: 1.8;
+    min-height: 100vh;
+}
+
+:not(.ml__content-container a) { text-decoration: none; }
+body a { color: #aaa; }
+nav a { color: #333; }
+
+.flash { 
+    font-weight: 400;
+    text-align: center;
+    margin:0;
+    padding: .25em 0;
+    color: #000000;
+}
+.danger { background-color: #F55; }
+.success { background-color: #0F9; }
+
+/* for form field errors */
+.error {
+    color: #ff0000;
+    font-size: .85rem;
+}
+
+.ml__main {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+nav {
+    width: 100%;
+    padding: 1rem;
+    background-color: #eee;
+    color: #000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ml__main main {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+footer {
+    padding: .5em 1rem;
+    background-color: #222;
+    font-size: .6rem;
+    letter-spacing: 1.1px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-brand a { font-weight: 600; letter-spacing: -1px; }
+
+.nav-links a { margin: 0 .65em; }
+
+form div {
+    display: flex;
+    flex-direction: column;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+form label {
+    margin-bottom: .5rem;
+}
+
+form input {
+    padding: .5em;
+}
+
+form button {
+    margin-top: 1rem;
+    text-transform: uppercase;
+    padding: .5rem 2rem;
+}
+
+.button {
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: .5rem 2rem;
+    color: #000;
+    background-color: #FFF;
+    border-radius: 3px;
+    line-height: normal;
+}
+
+.ml__content-container {
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 64px;
+    width: 100%;
+}
+
+.ml__content {
+    width: 100%;
+    max-width: 450px;
+}
+
+.ml__welcome-heading { line-height: normal; }
+.ml__welcome-note { margin-bottom: 2.5rem; }
+
+.ml__home--btn {
+    margin-right: 1rem;
+}
+
+.ml__login--signup-note {
+    margin-top: 2rem;
+}
+
+.ml__search-form {
+    margin-bottom: 3rem;
+}
+
+.ml__search-results {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+.ml__search-result {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2rem;
+}
+.ml__search-result a {
+    display: block;
+    flex-grow: 1;
+}
+.ml__search-result--image {
+    width: 100%;
+}
+.ml__search-result--title {
+    margin: 0;
+    font-weight: 400;
+}
+.ml__search-result--year {
+    margin: 0;
+}
+.ml__search-result button {
+    width: 100%;
+}
+
+
+.ml__movie-details {
+    padding: 0;
+    list-style: none;
+}
+
+.ml__movie-details--item {
+    margin-bottom: .5rem;
+}
+
+.ml__my-movies {
+    list-style: none;
+    padding: 0;
+}
+
+.ml__my-movies--item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px dotted #666;
+
+}
+
+.ml__my-movies--item a {
+    display: flex;
+    gap: 1rem;
+
+}
+
+.ml__my-movies--movie-image {
+    width: 100px;
+}
+
+.ml__my-movies--movie-title {
+    margin: 0;
+    font-weight: 400;
+    letter-spacing: normal;
+}
+
+.ml__my-movies--movie-year {
+    margin: 0;
+}
+
+.ml__my-movies--remove-button {
+    margin-top: 0;
+    padding: .5rem 1rem;
+}
+
+.ml__edit-profile--edit-container {
+    border-bottom: 1px dotted #666;
+    padding-bottom: 2rem;
+    margin-bottom: 2rem;
+}
+
+.warning {
+    color: #F00;
+}

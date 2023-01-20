@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block pagetitle %}Movie Ledger | Search Results for "{{ search_term }}"{% endblock %}
+
+{% block pagecontent %}
+<h1>Search Results for "{{ search_term }}"</h1>
+<a href="/movie/search">Search for another movie</a>
+<ul class="ml__search-results">
+    {% for movie in movies %}
+        <li class="ml__search-result">
+            <a href="/movie/detail/{{ movie['imdbID'] }}">
+                <img class="ml__search-result--image" src="{{ movie["Poster"] }}"> 
+                <h3 class="ml__search-result--title">{{ movie["Title"] }}</h3>
+                <p class="ml__search-result--year">{{ movie["Year"] }}</p>
+            </a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

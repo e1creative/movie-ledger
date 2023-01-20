@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block pagetitle %}Movie Ledger | {{ movie["Title"] }}{% endblock %}
+
+{% block pagecontent %}
+
+{% if request.referrer %}
+    {% if "/movie/search" in request.referrer %}
+        <a href="#" onclick=window.history.back()>Go Back</a>
+    {% else %}
+        <a href="{{ request.referrer }}">Go Back</a>
+    {% endif %}
+{% endif %}
+
+<h1>{{ movie["Title"] }}</h1>
+<ul class="ml__movie-details">
+    <li class="ml__movie-details--item"><img src="{{ movie['Poster'] }}" /></li>
+    <li class="ml__movie-details--item">Year: {{ movie["Year"] }}</li>
+    <li class="ml__movie-details--item">Rated: {{ movie["Rated"] }} </li>
+    <li class="ml__movie-details--item">Released: {{ movie["Released"] }}</li>
+    <li class="ml__movie-details--item">Runtime: {{ movie["Runtime"] }}</li>
+    <li class="ml__movie-details--item">Genre: {{ movie["Genre"] }}</li>
+    <li class="ml__movie-details--item">Actors: {{ movie["Actors"] }}</li>
+    <li class="ml__movie-details--item">Plot: {{ movie["Plot"] }}</li>
+</ul>
+{% if show_add %}
+<form id="ml__add-movie-form" action="/movie/new" method="POST">
+    <input type="hidden" name="imdb_id" value="{{ movie['imdbID'] }}">
+    <input type="hidden" name="title" value="{{ movie['Title'] }}">
+    <input type="hidden" name="year" value="{{ movie['Year'] }}">
+    <input type="hidden" name="imdb_img" value="{{ movie['Poster'] }}">
+    <button type="submit">Add to My List</button>
+</form>
+{% else %}
+<h3>Movie is in your list!</h3>
+{% endif %}
+
+{% endblock %}
