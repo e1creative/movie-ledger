@@ -6,30 +6,9 @@ const submitButton = document.getElementById("submitButton")
 
 const searchResults = document.getElementById("searchResults")
 
-searchResults.addEventListener('click', function(e) {
-  if (e.target.type === "submit") {
-    e.preventDefault();
-    
-    let formEls = e.target.parentNode.children
-
-    const params = {};
-    const config = {
-      headers: { 'Content-Type': 'application/json' }
-    }
-
-    for (let el of formEls) {
-      if (el.tagName === "INPUT" && el.type === "hidden") {
-        params[el.name] = el.value;
-      }
-    }
-  
-    axios.post("/movie/new", JSON.stringify(params), config)
-    .then(resp => {
-      console.log(resp);
-    })
-    .catch((err) => console.log(err))
-  }
-})
+/**
+ * Search functionality
+ */
 
 movieSearchForm.addEventListener('submit', function(e) {
   e.preventDefault();
@@ -44,7 +23,7 @@ movieSearchForm.addEventListener('submit', function(e) {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
   }
 
-  axios.post("/movie/search", params, config)
+  axios.post("/movie-search", params, config)
   .then(function(resp){
     data = resp.data;
 
@@ -60,7 +39,7 @@ movieSearchForm.addEventListener('submit', function(e) {
       newLI.classList.add("ml__search-result");
 
       let newA = document.createElement("a");
-      newA.setAttribute("href", `/movie/detail/${element['imdbID']}`)
+      newA.setAttribute("href", `/movie/${element['imdbID']}`)
       
       let newIMG = document.createElement("img") 
       newIMG.classList.add("ml__search-result--image");
@@ -83,44 +62,24 @@ movieSearchForm.addEventListener('submit', function(e) {
       
       newLI.appendChild(newA);
 
-      let newForm = document.createElement("form");
-      newForm.setAttribute("method", "POST");
-      newForm.setAttribute("action", "/movie/new");
-
-      /** 
-       * create 4 inputs and append to our new form
-       * 
-       * <input type="hidden" name="imdb_id" value="{{ movie['imdbID'] }}">
-       * <input type="hidden" name="title" value="{{ movie['Title'] }}">
-       * <input type="hidden" name="year" value="{{ movie['Year'] }}">
-       *  <input type="hidden" name="imdb_img" value="{{ movie['Poster'] }}">
-       */
-      let formChildren = ["imdbID", "Title", "Year", "Poster"]
-      
-      for (let child of formChildren) {
-        let newEl = document.createElement("input");
-        newEl.setAttribute("type", "hidden");
-        // for imdb_id
-        if (child === "imdbID") {
-          newEl.setAttribute("name", "imdb_id");
-        } else if (child === "Poster"){
-          newEl.setAttribute("name", "imdb_img");
-        } else {
-          newEl.setAttribute("name", child.toLowerCase());
-        }
-        newEl.setAttribute("value", element[child]);
-
-        newForm.appendChild(newEl)
+      // if the movie is already in our list, create a span with a note
+      if (element['ml_inList']) {
+        const newSpan = document.createElement("span")
+        newSpan.classList.add("ml__search-result--movie-in-list")
+        newSpan.innerText = "Already in My List";
+        newLI.appendChild(newSpan)
+      // if the movie is not in our list, create an "add" button
+      } else {
+        // create our "add" button and append to form
+        let newButton = document.createElement("button");
+        newButton.classList.add("ml__search-result--add-button")
+        newButton.setAttribute("data-id", element['imdbID']);
+        newButton.setAttribute("data-title", element['Title'])
+        newButton.setAttribute("data-year", element['Year'])
+        newButton.setAttribute("data-img", element['Poster'])
+        newButton.innerText = "Add to My List";
+        newLI.appendChild(newButton);
       }
-
-      // create submit button and append to form
-      let newButton = document.createElement("button");
-      newButton.setAttribute("type", "submit");
-      newButton.innerText = "Add to My List";
-      newForm.appendChild(newButton);
-
-      // append our completed form to our li
-      newLI.appendChild(newForm)
 
       // append our completed li to the ul
       newUL.appendChild(newLI)
@@ -135,4 +94,41 @@ movieSearchForm.addEventListener('submit', function(e) {
   .catch(function(err){
       console.log(err)
   })
+})
+
+
+/**
+ * Add movie functionality
+ */
+searchResults.addEventListener('click', function(e) {
+
+  if (e.target.className === "ml__search-result--add-button") {
+    e.preventDefault();
+    
+    let imdb_id = e.target.getAttribute("data-id")
+    let title = e.target.getAttribute("data-title")
+    let year = e.target.getAttribute("data-year")
+    let imdb_img = e.target.getAttribute("data-img")
+
+    const params = {imdb_id, title, year, imdb_img };
+    const config = {
+      headers: { 'Content-Type': 'application/json' }
+    }
+  
+    axios.post("/movie", JSON.stringify(params), config)
+    .then(resp => {
+      if (resp.status == 201 ){
+        const li = e.target.parentElement;
+        e.target.remove();
+        const newSpan = document.createElement("span")
+        newSpan.classList.add("ml__search-result--add-movie-success")
+        newSpan.innerText = "Added to My List";
+        li.appendChild(newP)
+      }
+    })
+    .catch((err) => {
+      if (err.response.status == 400)
+       alert("Movie is already in your list")
+    })
+  }
 })

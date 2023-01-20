@@ -4,22 +4,19 @@
 
 {% block pagecontent %}
 <h1>Welcome, {{ user.username }}!</h1>
-<a href="/movie/search">Search for a movie to add!</a>
+<a href="/movie-search">Search for a movie to add!</a>
 <h2>My Movie Ledger</h2>
 <ul id="myMovieList" class="ml__my-movies">
     {% for movie in user.movies %}
         <li class="ml__my-movies--item">
-            <a href="/movie/detail/{{ movie['imdb_id'] }}">
+            <a href="/movie/{{ movie['imdb_id'] }}">
                 <img class="ml__my-movies--movie-image" src="{{ movie.imdb_img }}">
                 <div class="ml__my-movies--movie-info-container">
                     <h3 class="ml__my-movies--movie-title">{{ movie.title }} </h3>
                     <p class="ml__my-movies--movie-year">{{ movie.year }}</p>
                 </div>
             </a>
-            <form action="/movie/delete" method="POST">
-                <input type="hidden" name="imdb_id" value="{{ movie['imdb_id'] }}">
-                <button type="submit" class="ml__my-movies--remove-button">Remove</button>
-            </form>
+            <button class="ml__my-movies--remove-button" data-id="{{ movie['imdb_id'] }}">Remove</button>
         </li>
     {% endfor %}
 </ul>

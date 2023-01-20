@@ -5,7 +5,7 @@
 {% block pagecontent %}
 
 {% if request.referrer %}
-    {% if "/movie/search" in request.referrer %}
+    {% if "/movie-search" in request.referrer %}
         <a href="#" onclick=window.history.back()>Go Back</a>
     {% else %}
         <a href="{{ request.referrer }}">Go Back</a>
@@ -24,7 +24,7 @@
     <li class="ml__movie-details--item">Plot: {{ movie["Plot"] }}</li>
 </ul>
 {% if show_add %}
-<form id="ml__add-movie-form" action="/movie/new" method="POST">
+<form id="ml__add-movie-form" action="/movie" method="POST">
     <input type="hidden" name="imdb_id" value="{{ movie['imdbID'] }}">
     <input type="hidden" name="title" value="{{ movie['Title'] }}">
     <input type="hidden" name="year" value="{{ movie['Year'] }}">

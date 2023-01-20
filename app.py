@@ -186,7 +186,6 @@ def edit_profile():
 
             except IntegrityError as exc:
 
-
                 flash("Username already exists!", "danger")
                 return redirect("/profile/edit")
 
@@ -232,10 +231,66 @@ def delete_profile():
 
 
 ###############################################################################
-# movie routes
+# movie routes (internal api routes)
 
-# get the info for movie using the movie id
-@app.route("/movie/detail/<movie_id>")
+# add a movie to our db for a user
+@app.route('/movie', methods=["POST"])
+def add_movie():
+    """Add a movie to our db.
+        Extract our data based on incoming request and adjust response accordingly."""
+
+    request_type = request.headers.get('Content-Type')
+
+    # for requests coming from a form (our movie detail page)
+    if request_type == "application/x-www-form-urlencoded":
+
+        movie = Movie(imdb_id=request.form["imdb_id"],
+                    user_id=g.user.id,
+                    title=request.form["title"],
+                    year =request.form["year"],
+                    imdb_img=request.form["imdb_img"]
+                    )
+        
+        try:
+            db.session.add(movie)
+
+            db.session.commit()
+
+        except IntegrityError as exc:
+            flash("Movie is already in your list!", "danger")
+            return redirect("/profile")
+
+        flash("Movie added to your list!", "success")
+        return redirect("/profile")
+
+
+    # for requests coming from an ajax page (our search page)
+    if request_type == "application/json":
+
+        movie = Movie(imdb_id=request.json["imdb_id"],
+                    user_id=g.user.id,
+                    title=request.json["title"],
+                    year =request.json["year"],
+                    imdb_img=request.json["imdb_img"]
+                    )
+    
+        try:
+            db.session.add(movie)
+
+            db.session.commit()
+
+        except IntegrityError as exc:
+            resp = jsonify({"message": "There was an error"})
+            return (resp, 400)
+
+        # success response goes here
+        resp = jsonify({"message": "Movie added to list!"})
+        return (resp, 201)
+
+
+# get the info for movie using the movie id.
+# this is a hybrid of our api route.
+@app.route("/movie/<movie_id>")
 def get_movie_detail(movie_id):
     """Get a single movie based on the id."""
 
@@ -257,94 +312,24 @@ def get_movie_detail(movie_id):
     return render_template("single-movie.html", movie=movie, show_add=show_add)
 
 
-# add a movie to our db for a user
-@app.route('/movie/new', methods=["POST"])
-def add_movie():
-    """Add a movie to our db.
-        Extract our data based on incoming request and adjust response accordingly."""
-
-    request_type = request.headers.get('Content-Type')
-
-    if request_type == "application/x-www-form-urlencoded":
-        print("\n***********")
-        print("incoming form data:")
-        print("***********\n")
-
-        imdb_id=request.form["imdb_id"],
-        user_id=g.user.id,
-        title=request.form["title"],
-        year =request.form["year"],
-        imdb_img=request.form["imdb_img"]
-
-    if request_type == "application/json":
-        print("\n***********")
-        print("incoming json:")
-        print(request.get_json())
-        print("***********\n")
-
-        imdb_id=request.get_json()["imdb_id"],
-        user_id=g.user.id,
-        title=request.get_json()["title"],
-        year =request.get_json()["year"],
-        imdb_img=request.get_json()["imdb_img"]
-    
-    movie = Movie(imdb_id=imdb_id,
-                user_id=user_id,
-                title=title,
-                year =year,
-                imdb_img=imdb_img
-            )
-
-    print("\n***********")
-    print("movie:", movie)
-    print("***********\n")
-
-    try:
-        db.session.add(movie)
-
-        db.session.commit()
-
-    except IntegrityError as exc:
-        if request_type == "application/x-www-form-urlencoded":
-            flash("Movie is already in your list!", "danger")
-            return redirect("/profile")
-
-        if request_type == "application/json":
-            return jsonify({movie})
-
-
-    if request_type == "application/x-www-form-urlencoded":
-        flash("Movie added to your list!", "success")
-        return redirect("/profile")
-    
-    if request_type == "application/json":
-        print("\n***********")
-        print("incoming json:")
-        print("***********\n")
-
-        # import pdb
-        # pdb.set_trace()
-        raise
-
-
 # delete a movie from our user's movie list
-@app.route("/movie/delete", methods=["POST"])
-def delete_movie():
+@app.route("/movie/<movie_id>", methods=["DELETE"])
+def delete_movie(movie_id):
     """Delete a movie from our db."""
 
     # below we delete the item in sqlalchemy, but we need db.session.commit()
-    Movie.query.filter_by(imdb_id=request.form["imdb_id"], user_id=g.user.id).delete()
+    Movie.query.filter_by(imdb_id=movie_id, user_id=g.user.id).delete()
 
     db.session.commit()
 
-    return redirect("/profile")
+    return jsonify({"message": "success"}, 200)
 
 
 ###############################################################################
-# api routes
+# external api routes
 
 # search movies from the omdb database.  must be logged in!
-@app.route("/movie/search", methods=["GET", "POST"])
+@app.route("/movie-search", methods=["GET", "POST"])
 def search_movies():
     """Get all the movies based on a search term from form data"""
      
@@ -362,6 +347,18 @@ def search_movies():
         # make the call to our external api
         # results will be a list from our services.py file
         results = movie_search(search_term)
+
+        # before we send our results to the user, check if any of the
+        # returned movies are already in our list and if so, set an attribute
+        user_movies = [movie.imdb_id for movie in g.user.movies]
+
+        for movie in results:
+            if movie['imdbID'] in user_movies:
+                movie["ml_inList"] = True
+
+        # print("\n***********")
+        # print("new movies result: ", results)
+        # print("***********\n")
 
         # we use axios to make the ajax request
         return jsonify(results)

@@ -1,25 +1,23 @@
-const myMovies = document.getElementById("myMovieList")
+const removeButtons = document.getElementsByTagName("button")
 
-myMovies.addEventListener('click', function(e){
-    e.preventDefault();
-    if (e.target.tagName == "BUTTON") {
-        let formEls = e.target.parentNode.children
+for (let el of removeButtons) {
+  el.addEventListener('click', deleteMovie)
+}
 
-        const params = {};
-        const config = {
-          headers: { 'Content-Type': 'application/json' }
-        }
-    
-        for (let el of formEls) {
-          if (el.tagName === "INPUT" && el.type === "hidden") {
-            params[el.name] = el.value;
-          }
-        }
+function deleteMovie(e) {
+  e.preventDefault();
       
-        axios.post("/movie/new", JSON.stringify(params), config)
-        .then(resp => {
-          console.log(resp);
-        })
-        .catch((err) => console.log(err))
+  const movieID = e.target.getAttribute("data-id")
+
+  const config = {
+    headers: { 'Content-Type': 'application/json' }
+  }
+
+  axios.delete(`/movie/${movieID}`, config)
+  .then(resp => {
+    if (resp.status == 200) {
+      e.target.parentElement.remove()
     }
-})
+  })
+  .catch((err) => console.log("err: ", err))
+}
