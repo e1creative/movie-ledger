@@ -347,10 +347,10 @@ def search_movies():
         # results will be a list from our services.py file
         results = movie_search(search_term)
 
-        print("\n***********")
-        print("movie search results: \n")
-        print(results)
-        print("***********\n")
+        # print("\n***********")
+        # print("movie search results: \n")
+        # print(results)
+        # print("***********\n")
 
         # before we send our results to the user, check if any of the
         # returned movies are already in our list and if so, set an attribute

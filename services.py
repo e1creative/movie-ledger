@@ -3,8 +3,10 @@
 import os
 import requests
 
-# from keys import API_KEY
-API_KEY = os.environ.get('API_KEY')
+if os.environ.get('FLASK_ENV') == "development":
+    from keys import API_KEY
+else:
+    API_KEY = os.environ.get('API_KEY')
 
 print("\n***********")
 print("API KEY: ", API_KEY)
