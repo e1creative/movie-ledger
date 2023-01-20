@@ -27,7 +27,6 @@ connect_db(app)
 toolbar = DebugToolbarExtension(app)
 
 CURR_USER_KEY = "curr_user"
-API_KEY = os.environ.get('API_KEY')
 
 ###############################################################################
 # do this before every request!
