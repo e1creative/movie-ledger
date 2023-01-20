@@ -123,7 +123,7 @@ searchResults.addEventListener('click', function(e) {
         const newSpan = document.createElement("span")
         newSpan.classList.add("ml__search-result--add-movie-success")
         newSpan.innerText = "Added to My List";
-        li.appendChild(newP)
+        li.appendChild(newSpan)
       }
     })
     .catch((err) => {
