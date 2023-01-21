@@ -22,6 +22,7 @@ app.config['SQLALCHEMY_ECHO'] = True
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
 
+
 connect_db(app)
 
 toolbar = DebugToolbarExtension(app)
@@ -30,8 +31,6 @@ CURR_USER_KEY = "curr_user"
 
 ###############################################################################
 # do this before every request!
-
-# "g" is 
 
 @app.before_request
 def add_user_to_g():
@@ -44,6 +43,9 @@ def add_user_to_g():
     else:
         g.user = None
 
+    # print("\n***************")
+    # print("From app.before_request, g.user: ", g.user)
+    # print("***************\n")
 
 ###############################################################################
 # login, signup, logout
@@ -129,7 +131,7 @@ def logout():
     do_logout()
 
     flash("You have been logged out successfully!", "success")
-    return redirect('/login')
+    return redirect('/')
 
 
 ###############################################################################
@@ -214,8 +216,10 @@ def delete_profile():
 
         if user:
             # coudn't use User.query.get(id) here; had to use filter_by(). ???
-            User.query.filter_by(id=g.user.id).delete()
+            # User.query.filter_by(id=g.user.id).delete()
 
+            # need to use db.session.delete(obj) if we want the delete cascade to work
+            db.session.delete(user)
             db.session.commit()
 
             do_logout()
@@ -321,7 +325,9 @@ def delete_movie(movie_id):
 
     db.session.commit()
 
-    return jsonify({"message": "success"}, 200)
+    resp = jsonify({"message": "success"})
+
+    return (resp, 200)
 
 
 ###############################################################################
@@ -361,7 +367,9 @@ def search_movies():
                 movie["ml_inList"] = True
 
         # we use axios to make the ajax request
-        return jsonify(results['Search'])
+        resp = jsonify(results['Search'])
+        
+        return (resp, 200)
     
     return render_template("movie-search.html", form=form)
 

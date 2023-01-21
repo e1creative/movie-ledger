@@ -32,12 +32,12 @@ class User(db.Model):
                     default=None,
                     nullable=False)
 
+
     # define our relationship for users to movies, and backref
     #
     # the first arg in the relationship method is the class name
     # of the model we want to reference with this relationship
-    movies = db.relationship('Movie', backref='User')
-
+    movies = db.relationship('Movie', backref='user', cascade='all, delete')
 
 
     def __repr__(self):
@@ -105,11 +105,11 @@ class Movie(db.Model):
                         nullable=False)
 
 
-    # define our relationship for movies to users, and backref
+    # define our relationship for users to movies, and backref
     #
     # the first arg in the relationship method is the class name
     # of the model we want to reference with this relationship
-    # user = db.relationship('User', backref='Movie')
+    # user = db.relationship('User')
 
 
     def __repr__(self):
