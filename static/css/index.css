@@ -1,5 +1,9 @@
 @import url(normalize.css);
 
+:root{
+    --border-color: #666;
+}
+
 * { box-sizing: border-box; }
 
 body {
@@ -190,13 +194,23 @@ button {
 
 .ml__movie-details {
     padding: 0;
+    padding-bottom: 1rem;
     list-style: none;
+    border-bottom: 1px dotted var(--border-color);
 }
 
 .ml__movie-details--item {
     margin-bottom: .5rem;
 }
-
+.ml__movie-details--add-form-favorite{
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    align-items: center;
+    gap: .75rem;
+}
+.ml__movie-details--add-form-favorite label{
+    margin-bottom: 0;
+}
 .ml__my-movies {
     list-style: none;
     padding: 0;
@@ -209,7 +223,7 @@ button {
     gap: 1rem;
     margin-bottom: 1rem;
     padding-bottom: 1rem;
-    border-bottom: 1px dotted #666;
+    border-bottom: 1px dotted var(--border-color);
 
 }
 
@@ -221,6 +235,7 @@ button {
 
 .ml__my-movies--movie-image {
     width: 65px;
+    height: 100%;
 }
 
 .ml__my-movies--movie-title {
@@ -239,7 +254,7 @@ button {
 }
 
 .ml__edit-profile--edit-container {
-    border-bottom: 1px dotted #666;
+    border-bottom: 1px dotted var(--border-color);
     padding-bottom: 2rem;
     margin-bottom: 2rem;
 }

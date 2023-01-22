@@ -8,11 +8,18 @@
 <ul id="myMovieList" class="ml__my-movies">
     {% for movie in user.movies %}
         <li class="ml__my-movies--item">
+            {% if movie.favorite %}
+                <button class="ml__my-movies--movie-fav true">Favorite</button>
+            {% else %}
+                <button class="ml__my-movies--movie-fav">Favorite</button>
+            {% endif %}
             <a href="/movie/{{ movie['imdb_id'] }}">
                 <img class="ml__my-movies--movie-image" src="{{ movie.imdb_img }}">
                 <div class="ml__my-movies--movie-info-container">
                     <h3 class="ml__my-movies--movie-title">{{ movie.title }}</h3>
                     <p class="ml__my-movies--movie-year">{{ movie.year }}</p>
+                    <p>{{ movie.actors }}</p>
+                    <p>{{ movie.favorite }}</p>
                 </div>
             </a>
             <button class="ml__my-movies--remove-button" data-id="{{ movie['imdb_id'] }}">Remove</button>

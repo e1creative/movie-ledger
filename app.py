@@ -253,11 +253,13 @@ def handle_movie(movie_id):
         movie = Movie(imdb_id=movie_id,
                     user_id=g.user.id,
                     title=request.form["title"],
-                    year=request.form["year"],
+                    year=request.form["year"][0:4],
                     actors=request.form['actors'],
+                    favorite=True if request.form.get('favorite') else False,
+                    platform=request.form['platform'],
                     imdb_img=request.form["imdb_img"]
                     )
-        
+
         try:
             db.session.add(movie)
 
@@ -274,15 +276,26 @@ def handle_movie(movie_id):
     # for requests coming from an ajax page (our search page)
     if request.headers.get('Content-Type') == "application/json":
 
-        movie = Movie(imdb_id=request.json["imdb_id"],
+        # to get actors, we need to make an api call
+        # our movie_id comes from the route, which is
+        # created in our js code
+        movie = movie_search_by_id(movie_id)
+
+        m = Movie(imdb_id=request.json["imdb_id"],
                     user_id=g.user.id,
                     title=request.json["title"],
-                    year=request.json["year"],
+                    year=request.json["year"][0:4],
+                    actors=movie['Actors'],
                     imdb_img=request.json["imdb_img"]
                     )
     
+        print("\n***************")
+        print("Movie object: ")
+        print(m.actors)
+        print("***************\n")
+
         try:
-            db.session.add(movie)
+            db.session.add(m)
 
             db.session.commit()
 

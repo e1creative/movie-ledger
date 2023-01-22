@@ -27,9 +27,12 @@
 <form id="ml__add-movie-form" action="/movie/{{ movie['imdbID'] }}" method="POST">
     {{ form.hidden_tag() }}
     {% for field in form if field.widget.input_type != 'hidden' %}
-        {{ field }}    
+        <div class="ml__movie-details--add-form-{{ field.name }}">
+            {{ field.label }}
+            {{ field }}    
+        </div>
     {% endfor %}
-    <button type="submit">Add to My List</button>
+    <button type="submit">Add to Ledger</button>
 </form>
 {% else %}
 <h3>Movie is in your list!</h3>

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, HiddenField
+from wtforms import StringField, PasswordField, HiddenField, BooleanField, SelectField
 
 from wtforms.validators import DataRequired, Email, Length, Optional
 import email_validator
@@ -50,6 +50,17 @@ class MovieAddForm(FlaskForm):
     year = HiddenField("year")
     actors = HiddenField("actors")
     imdb_img = HiddenField("imdb_img")
+    favorite = BooleanField("Favorite")
+    platform = SelectField("Platform (optional)",
+                choices=[
+                    ("n/a", "N/A"),
+                    ("netflix", "Netflix"),
+                    ("amazon prime", "Amazon Prime"),
+                    ("hbo max", "HBO Max"),
+                    ("hulu", "Hulu"),
+                    ("apple tv", "Apple TV")
+                    ]
+                )
 
     #     <input type="hidden" name="imdb_id" value="{{ movie['imdbID'] }}">
     # <input type="hidden" name="title" value="{{ movie['Title'] }}">
