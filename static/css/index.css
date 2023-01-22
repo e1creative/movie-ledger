@@ -119,6 +119,20 @@ button {
 
 .ml__welcome-heading { line-height: normal; }
 .ml__welcome-note { margin-bottom: 2.5rem; }
+.ml__welcome-note--new-user {
+    padding: 1rem;
+    background-color: #0F9;
+    color: #000;
+}
+.ml__welcome-note--new-user > *:first-child {
+    margin-top: 0;
+}
+.ml__welcome-note--new-user > *:last-child {
+    margin-bottom: 0;
+}
+.ml__welcome-note--note {
+    font-size: .65rem;
+}
 
 .ml__home--btn {
     margin-right: 1rem;

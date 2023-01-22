@@ -105,6 +105,14 @@ searchResults.addEventListener('click', function(e) {
   if (e.target.className === "ml__search-result--add-button") {
     e.preventDefault();
     
+    /**
+     * results of our api search do not contain actors
+     * if we want the actors, we need to make another
+     * api call to get the movie details before we send
+     * our post request to add our movie to our db
+     */
+
+
     let imdb_id = e.target.getAttribute("data-id")
     let title = e.target.getAttribute("data-title")
     let year = e.target.getAttribute("data-year")
@@ -115,7 +123,7 @@ searchResults.addEventListener('click', function(e) {
       headers: { 'Content-Type': 'application/json' }
     }
   
-    axios.post("/movie", JSON.stringify(params), config)
+    axios.post(`/movie/${imdb_id}`, JSON.stringify(params), config)
     .then(resp => {
       if (resp.status == 201 ){
         const li = e.target.parentElement;

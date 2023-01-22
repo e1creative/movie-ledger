@@ -101,7 +101,15 @@ class Movie(db.Model):
                         nullable=False)
     year = db.Column(db.String(4),
                         nullable=False)
+    actors = db.Column(db.Text,
+                        nullable=True)
+    platform = db.Column(db.Text,
+                        default="n/a",
+                        nullable=False)
     imdb_img = db.Column(db.Text,
+                        nullable=False)
+    favorite = db.Column(db.Boolean,
+                        default=False,
                         nullable=False)
 
 

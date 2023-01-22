@@ -4,7 +4,25 @@
 
 {% block pagecontent %}
 <h1>Movie Search</h1>
-<p>Enter a search term to find a movie!</p>
+{% if "/signup" in request.referrer %}
+    <div class="ml__welcome-note ml__welcome-note--new-user">
+        <h2>Welcome, {{ user.username }}!</h2>
+        <p>
+            The Movie Ledger is  place to save all your viewed
+            movies and series, regardless of platform.
+        </p>
+        <p>
+            Use the form below to search for a movie or series 
+            and add it to your ledger!  You can mark items in your 
+            ledger as a favorite, and sort items based on year
+            or title!
+        </p>
+        <p class="ml__welcome-note--note">
+            NOTE: This notice will only be shown once.
+        </p>
+    </div>
+{% endif %}
+<p>Enter a search term below to find a movie or series!</p>
 <form id="movieSearchForm" class="ml__search-form" method="POST">
     {{ form.hidden_tag() }}
     {% for field in form if field.widget.input_type != 'hidden' %}

@@ -7,7 +7,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from flask_cors import CORS
 
 from services import movie_search, movie_search_by_id
-from forms import UserAddForm, LoginForm, UserEditForm, UserDeleteForm, MovieSearchForm
+from forms import UserAddForm, LoginForm, UserEditForm, UserDeleteForm, MovieSearchForm, MovieAddForm
 from models import db, connect_db, User, Movie
 
 app = Flask(__name__)
@@ -99,7 +99,7 @@ def signup():
             flash("Username already taken", 'danger')
             return render_template('/signup.html', form=form)
 
-        return redirect('/profile')
+        return redirect('/movie-search')
 
     return render_template('signup.html', form=form)
 
@@ -116,7 +116,7 @@ def login():
         if user:
             do_login(user)
 
-            return redirect("/profile")
+            return redirect("/movies")
         
         flash("Invalid login credentials.", 'danger')
         return redirect('/login')
@@ -137,21 +137,7 @@ def logout():
 ###############################################################################
 # user routes
 
-# this route should only be shown if a user is logged in!
-@app.route("/profile")
-def show_profile():
-    """Show the current user information including the list of movies.
-        With a section to add movies."""
-
-    # if a user is NOT in the session then redirect to login
-    if not g.user:
-        flash("Please login!", "danger")
-        return redirect("/login")
-
-    return render_template("profile.html", user=g.user)
-
-
-@app.route("/profile/edit", methods=["GET", "POST"])
+@app.route("/profile", methods=["GET", "POST"])
 def edit_profile():
     """Show/handle the user profile editing page.  Require auth!"""
 
@@ -188,15 +174,15 @@ def edit_profile():
             except IntegrityError as exc:
 
                 flash("Username already exists!", "danger")
-                return redirect("/profile/edit")
+                return redirect("/profile")
 
             flash("Your profile has been updated!", "success")
             return redirect("/profile")
 
         flash("Current password incorrect!", "danger")
-        return redirect("/profile/edit")
+        return redirect("/profile")
 
-    return render_template("edit-profile.html", editForm=editForm, deleteForm=deleteForm, user=g.user)
+    return render_template("profile.html", editForm=editForm, deleteForm=deleteForm, user=g.user)
 
 
 @app.route('/profile/delete', methods=["POST"])
@@ -228,29 +214,47 @@ def delete_profile():
             return redirect("/")
 
         flash("Incorrect password! Your profile has not been deleted!", "danger")
-        return redirect("/profile/edit")
+        return redirect("/profile")
     
-    return redirect("/profile/edit")
+    return redirect("/profile")
 
 
 ###############################################################################
 # movie routes (internal api routes)
 
-# add a movie to our db for a user
-@app.route('/movie', methods=["POST"])
-def add_movie():
-    """Add a movie to our db.
-        Extract our data based on incoming request and adjust response accordingly."""
+@app.route('/movies')
+def show_my_movies():
+    """Show all users movies."""
 
-    request_type = request.headers.get('Content-Type')
+    if not g.user:
+        flash("Please login!", "danger")
+        return redirect("/login")
+    
+    return render_template('movies.html', user=g.user)
+    
 
-    # for requests coming from a form (our movie detail page)
-    if request_type == "application/x-www-form-urlencoded":
+@app.route("/movie/<movie_id>", methods=["GET", "POST"])
+def handle_movie(movie_id):
+    """Get a single movie based on the id.
+    Add the movie if a post request is coming in.
+    """
 
-        movie = Movie(imdb_id=request.form["imdb_id"],
+    # if a user is NOT in the session then redirect to login
+    if not g.user:
+        flash("Please login!", "danger")
+        return redirect("/login")
+
+
+    form = MovieAddForm()
+
+    # if form data is submitted (our movie detail page)
+    if form.validate_on_submit():
+
+        movie = Movie(imdb_id=movie_id,
                     user_id=g.user.id,
                     title=request.form["title"],
-                    year =request.form["year"],
+                    year=request.form["year"],
+                    actors=request.form['actors'],
                     imdb_img=request.form["imdb_img"]
                     )
         
@@ -261,19 +265,19 @@ def add_movie():
 
         except IntegrityError as exc:
             flash("Movie is already in your list!", "danger")
-            return redirect("/profile")
+            return redirect("/movies")
 
         flash("Movie added to your list!", "success")
-        return redirect("/profile")
+        return redirect("/movies")
 
 
     # for requests coming from an ajax page (our search page)
-    if request_type == "application/json":
+    if request.headers.get('Content-Type') == "application/json":
 
         movie = Movie(imdb_id=request.json["imdb_id"],
                     user_id=g.user.id,
                     title=request.json["title"],
-                    year =request.json["year"],
+                    year=request.json["year"],
                     imdb_img=request.json["imdb_img"]
                     )
     
@@ -291,28 +295,23 @@ def add_movie():
         return (resp, 201)
 
 
-# get the info for movie using the movie id.
-# this is a hybrid of our api route.
-@app.route("/movie/<movie_id>")
-def get_movie_detail(movie_id):
-    """Get a single movie based on the id."""
-
-    # if a user is NOT in the session then redirect to login
-    if not g.user:
-        flash("Please login!", "danger")
-        return redirect("/login")
+    # if the form has not been submitted (get request) then
+    # load the movie info: get data from our api and pass
+    # to our form
 
     # movie data returned will be a dictionary
     movie = movie_search_by_id(movie_id)
 
     # check if this movie is already in our database...
+    # .first() returns the movie, or no movies
     movie_in_db = Movie.query.filter_by(imdb_id=movie_id, user_id=g.user.id).first()
 
-    # if so, then do not show the "add to my movies button" and
-    # show a note saying that the movie is already in your db
-    show_add = False if movie_in_db else True
+    form.title.data=movie['Title']
+    form.year.data=movie['Year']
+    form.actors.data=movie['Actors']
+    form.imdb_img.data=movie['Poster']
 
-    return render_template("single-movie.html", movie=movie, show_add=show_add)
+    return render_template("movie-detail.html", form=form, movie=movie, movie_in_db=movie_in_db)
 
 
 # delete a movie from our user's movie list
@@ -353,11 +352,6 @@ def search_movies():
         # results will be a list from our services.py file
         results = movie_search(search_term)
 
-        # print("\n***********")
-        # print("movie search results: \n")
-        # print(results)
-        # print("***********\n")
-
         # before we send our results to the user, check if any of the
         # returned movies are already in our list and if so, set an attribute
         user_movies = [movie.imdb_id for movie in g.user.movies]
@@ -371,7 +365,7 @@ def search_movies():
         
         return (resp, 200)
     
-    return render_template("movie-search.html", form=form)
+    return render_template("movie-search.html", form=form, user=g.user)
 
 
 ###############################################################################

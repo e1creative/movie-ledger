@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block pagetitle %}Movie Ledger | Profile{% endblock %}
+
+{% block pagecontent %}
+<h1>{{ user.username }}'s Ledger</h1>
+<a href="/movie-search">Search for a movie or series to add!</a>
+<ul id="myMovieList" class="ml__my-movies">
+    {% for movie in user.movies %}
+        <li class="ml__my-movies--item">
+            <a href="/movie/{{ movie['imdb_id'] }}">
+                <img class="ml__my-movies--movie-image" src="{{ movie.imdb_img }}">
+                <div class="ml__my-movies--movie-info-container">
+                    <h3 class="ml__my-movies--movie-title">{{ movie.title }}</h3>
+                    <p class="ml__my-movies--movie-year">{{ movie.year }}</p>
+                </div>
+            </a>
+            <button class="ml__my-movies--remove-button" data-id="{{ movie['imdb_id'] }}">Remove</button>
+        </li>
+    {% endfor %}
+</ul>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="/static/js/movies.js"></script>
+{% endblock %}

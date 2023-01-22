@@ -23,12 +23,12 @@
     <li class="ml__movie-details--item">Actors: {{ movie["Actors"] }}</li>
     <li class="ml__movie-details--item">Plot: {{ movie["Plot"] }}</li>
 </ul>
-{% if show_add %}
-<form id="ml__add-movie-form" action="/movie" method="POST">
-    <input type="hidden" name="imdb_id" value="{{ movie['imdbID'] }}">
-    <input type="hidden" name="title" value="{{ movie['Title'] }}">
-    <input type="hidden" name="year" value="{{ movie['Year'] }}">
-    <input type="hidden" name="imdb_img" value="{{ movie['Poster'] }}">
+{% if not movie_in_db %}
+<form id="ml__add-movie-form" action="/movie/{{ movie['imdbID'] }}" method="POST">
+    {{ form.hidden_tag() }}
+    {% for field in form if field.widget.input_type != 'hidden' %}
+        {{ field }}    
+    {% endfor %}
     <button type="submit">Add to My List</button>
 </form>
 {% else %}
