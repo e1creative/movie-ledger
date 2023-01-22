@@ -3,29 +3,36 @@
 {% block pagetitle %}Movie Ledger | Profile{% endblock %}
 
 {% block pagecontent %}
-<h1>{{ user.username }}'s Ledger</h1>
-<a href="/movie-search">Search for a movie or series to add!</a>
+<h1 class="ml__my-movies--page-title">{{ user.username }}'s Ledger</h1>
+{% if not user.movies %}
+<h3>No movies found....</h3>
+<a class="button" href="/movie-search">Search Now</a>
+{% endif %}
+{% if user.movies %}
 <ul id="myMovieList" class="ml__my-movies">
     {% for movie in user.movies %}
         <li class="ml__my-movies--item">
             {% if movie.favorite %}
-                <button class="ml__my-movies--movie-fav true">Favorite</button>
+                <i class="fa-star fas ml__my-movies--movie-fav" data-id="{{ movie['imdb_id'] }}"></i>
             {% else %}
-                <button class="ml__my-movies--movie-fav">Favorite</button>
+                <i class="far fa-star ml__my-movies--movie-fav" data-id="{{ movie['imdb_id'] }}"></i>
             {% endif %}
             <a href="/movie/{{ movie['imdb_id'] }}">
                 <img class="ml__my-movies--movie-image" src="{{ movie.imdb_img }}">
                 <div class="ml__my-movies--movie-info-container">
                     <h3 class="ml__my-movies--movie-title">{{ movie.title }}</h3>
                     <p class="ml__my-movies--movie-year">{{ movie.year }}</p>
-                    <p>{{ movie.actors }}</p>
-                    <p>{{ movie.favorite }}</p>
+                    <p class="ml__my-movies--movie-actors">{{ movie.actors }}</p>
+                    <p class="ml__my-movies--movie-actors">Date Viewed: {{ movie.date_viewed }}</p>
+                    <p class="ml__my-movies--movie-actors">Date Added: {{ movie.date_added }}</p>
+                    <p class="ml__my-movies--movie-platform">Platform: {{ movie.platform }}</p>
                 </div>
             </a>
-            <button class="ml__my-movies--remove-button" data-id="{{ movie['imdb_id'] }}">Remove</button>
+            <button class="ml__my-movies--remove-button" data-id="{{ movie['imdb_id'] }}">X</button>
         </li>
     {% endfor %}
 </ul>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="/static/js/movies.js"></script>
+{% endif %}
 {% endblock %}

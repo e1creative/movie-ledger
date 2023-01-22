@@ -22,7 +22,7 @@ Features
 
 - Favorite:  Add your movie as a favorite movie, so that it will appear at the top of your list!
 
-- Movie Sort: sort your viewed movies by title, year, or date added to list.
+- Movie Sort: sort your viewed movies by title, year, or date added to your list.
 
 
 User Flow:

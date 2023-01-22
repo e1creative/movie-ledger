@@ -22,7 +22,7 @@
         </p>
     </div>
 {% endif %}
-<p>Enter a search term below to find a movie or series!</p>
+<p>Enter a term below to find a movie or series by title!</p>
 <form id="movieSearchForm" class="ml__search-form" method="POST">
     {{ form.hidden_tag() }}
     {% for field in form if field.widget.input_type != 'hidden' %}

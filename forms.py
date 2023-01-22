@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, HiddenField, BooleanField, SelectField
+from wtforms import StringField, PasswordField, HiddenField, BooleanField, SelectField, DateField
 
 from wtforms.validators import DataRequired, Email, Length, Optional
 import email_validator
@@ -43,7 +43,7 @@ class MovieSearchForm(FlaskForm):
     search_term = StringField('Search Term', validators=[DataRequired()])
 
 
-class MovieAddForm(FlaskForm):
+class MovieAddEditForm(FlaskForm):
     """Movie add form on the movie detail page."""
 
     title = HiddenField("title")
@@ -53,7 +53,7 @@ class MovieAddForm(FlaskForm):
     favorite = BooleanField("Favorite")
     platform = SelectField("Platform (optional)",
                 choices=[
-                    ("n/a", "N/A"),
+                    ("", ""),
                     ("netflix", "Netflix"),
                     ("amazon prime", "Amazon Prime"),
                     ("hbo max", "HBO Max"),
@@ -61,6 +61,8 @@ class MovieAddForm(FlaskForm):
                     ("apple tv", "Apple TV")
                     ]
                 )
+    date_viewed = DateField("Date Viewed", validators=[Optional()])
+    date_added = HiddenField("data_added")
 
     #     <input type="hidden" name="imdb_id" value="{{ movie['imdbID'] }}">
     # <input type="hidden" name="title" value="{{ movie['Title'] }}">

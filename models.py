@@ -3,7 +3,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
-# from datetime import datetime
+from datetime import datetime
 
 db = SQLAlchemy()
 bcrypt = Bcrypt()
@@ -104,12 +104,16 @@ class Movie(db.Model):
     actors = db.Column(db.Text,
                         nullable=True)
     platform = db.Column(db.Text,
-                        default="n/a",
-                        nullable=False)
+                        nullable=True)
     imdb_img = db.Column(db.Text,
                         nullable=False)
     favorite = db.Column(db.Boolean,
                         default=False,
+                        nullable=False)
+    date_viewed = db.Column(db.Date,
+                        nullable=True)
+    date_added = db.Column(db.Date,
+                        default=datetime.now(),
                         nullable=False)
 
 
@@ -125,4 +129,4 @@ class Movie(db.Model):
        
         m = self
        
-        return f"<Movie imdb_id={m.imdb_id} user_id={m.user_id} title={m.title} year={m.year} imdb_img={m.imdb_img}>"
+        return f"<Movie imdb_id={m.imdb_id} user_id={m.user_id} title={m.title} year={m.year} favorite={m.favorite} platform={m.platform}>"

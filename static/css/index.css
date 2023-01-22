@@ -109,7 +109,7 @@ button {
 }
 
 .ml__content-container {
-    padding: 1rem;
+    padding: 2rem;
     display: flex;
     justify-content: center;
     margin-bottom: 64px;
@@ -202,18 +202,26 @@ button {
 .ml__movie-details--item {
     margin-bottom: .5rem;
 }
-.ml__movie-details--add-form-favorite{
+.ml__movie-details--edit-title { margin-bottom: 0; }
+.ml__movie-details--edit-note { margin-top: 0; margin-bottom: 2rem; }
+.ml__movie-details--add-edit-form-favorite {
     flex-direction: row-reverse;
     justify-content: flex-end;
     align-items: center;
     gap: .75rem;
 }
-.ml__movie-details--add-form-favorite label{
+.ml__movie-details--add-edit-form-favorite label {
     margin-bottom: 0;
 }
+
+.ml__my-movies--page-title {
+    border-bottom: 1px dotted var(--border-color);
+}
+
 .ml__my-movies {
     list-style: none;
     padding: 0;
+    margin-top: 1rem;
 }
 
 .ml__my-movies--item {
@@ -226,31 +234,54 @@ button {
     border-bottom: 1px dotted var(--border-color);
 
 }
-
 .ml__my-movies--item a {
     display: flex;
     gap: 1rem;
-
+    align-items: center;
+    flex-grow: 1;
+    text-decoration: none;
 }
+/* favorite star */
+.fa-star { font-size: 1rem; }
+.fa-star.far { color: #fff; }
+.fa-star.fas { color: #0F9; }
 
 .ml__my-movies--movie-image {
-    width: 65px;
+    width: 75px;
     height: 100%;
 }
-
+.ml__my-movies--movie-info-container > *:not(h3) {
+    font-size: .85rem;
+}
 .ml__my-movies--movie-title {
     margin: 0;
-    font-weight: 400;
+    font-weight: 600;
     letter-spacing: normal;
+    font-size: 1rem;
+    line-height: 1.15;
 }
 
 .ml__my-movies--movie-year {
     margin: 0;
 }
 
+.ml__my-movies--movie-actors {
+    margin: 0;
+}
+
+.ml__my-movies--movie-platform {
+    margin: 0;
+}
+
 .ml__my-movies--remove-button {
     margin-top: 0;
-    padding: .5rem 1rem;
+    font-weight: 600;
+    font-size: .6rem;
+    padding: .5em .75em;
+    background-color: transparent;
+    color: #a00000;
+    border: 1px solid #a00000;
+    border-radius: 3px;
 }
 
 .ml__edit-profile--edit-container {
