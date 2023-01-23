@@ -4,25 +4,26 @@
 
 {% block pagecontent %}
 <h1 class="ml__my-list--page-title">{{ user.username }}'s Ledger</h1>
-{% if not user.movies %}
-<h3>No movies found....</h3>
-<a class="button" href="/movie-search">Search Now</a>
-{% endif %}
-{% if user.movies %}
+
+{% if movies or "favorites" in filters %}
 <div class="ml__my-list--sort-filter-container">
-    <h3 class="ml__my-list--sort-filter-heading">Sort & Filter</h3>
+    <h3 class="ml__my-list--sort-filter-heading">Filter</h3>
     <form class="ml__my-list--sort-filter-form">
 
         <div class="ml__my-list--filter">
             <span>Filter by: </span>
             <div>
+                {% if "favorites" in filters %}
+                <input type="checkbox" id="favorites" name="filter" value="favorites" checked>
+                {% else %}
                 <input type="checkbox" id="favorites" name="filter" value="favorites">
+                {% endif %}
                 <label for="favorites">Favorites</label> 
             </div>
 
         </div>
 
-        <div class="ml__my-list--sort">
+        <!-- <div class="ml__my-list--sort">
             <div>
                 <select id="sort" name="sort">
                     <option value="">Default</option>
@@ -39,15 +40,31 @@
                 <input type="radio" id="order-desc" name="order" value="desc">
                 <label for="order-desc">Desc</label>
             </div>
-        </div>
+        </div> -->
         <div class="ml__my-list--sort-filter-buttons">
-            <button class="ml__my-list--sort-filter-apply-button" type="submit">Apply</button>
-            <a class="ml__my-list--sort-filter-reset-button button" href="/movies">Reset</a>
+            <button id="myListFilterButton" class="ml__my-list--sort-filter-apply-button disabled" type="submit">Apply</button>
+            <a id="myListSortButton" class="ml__my-list--sort-filter-reset-button button" href="/movies">Reset</a>
         </div>
     </form>
 </div>
+{% endif %}
+
+
+{% if "favorites" in filters %}
+<h2>My Favorites</h2>
+{% endif %}
+
+{% if not movies %}
+<h3>No movies found....</h3>
+{% endif %}
+
+{% if not movies and "favorites" not in filters %}
+<a class="button" href="/movie-search">Search Now</a>
+{% endif %}
+
+{% if movies or ("favorites" in filters and movies) %}
 <ul id="myMovieList" class="ml__my-list">
-    {% for movie in user.movies %}
+    {% for movie in movies %}
         <li class="ml__my-list--item">
             <a href="/movie/{{ movie['imdb_id'] }}">
                 <img class="ml__my-list--image" src="{{ movie.imdb_img }}">
@@ -71,6 +88,9 @@
         </li>
     {% endfor %}
 </ul>
+{% endif %}
+
+{% if movies or "favorites" in filters %}
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="/static/js/movies.js"></script>
 {% endif %}

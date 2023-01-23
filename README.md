@@ -12,7 +12,7 @@ Features
 
 - Profile delete: delete your profile at any time, all data is wiped from our database.
 
-- Movie/Series Lookup: using the the OMDB api, browse through thousands of movies or series to find the title you are looking for.
+- Movie/Series Search: using the the OMDB api, browse through thousands of movies or series to find the title you are looking for.
 
 - Store: store the movie or series title in your list for quick browsing.
 
@@ -23,6 +23,7 @@ Features
 - Favorite:  Add your movie as a favorite movie, so that it will appear at the top of your list!
 
 - Movie Sort: sort your viewed movies by title, year, or date added to your list.
+
 
 
 User Flow:
@@ -41,11 +42,11 @@ User Flow:
     - this add function will be a form submission
     - if a user adds this movie, they will be redirected to their profile page
     - the go back function should NOT refresh the previous page, but keep the results of the that page
-6. User adds a movie from the details page and is redirectd to the profile page.
-7. User profile page is will contain a greeting and list of the movies they have viewed.  Here, a users favorite movies will be displayed at the top of the page, with the remaining movies displayed below (default sort order will be by year.  User can sort the movies by title, by year, or by favorite.
+6. User adds a movie from the details page and is redirectd to the "My List" page.
+7. "My List" page contains a list of the movies the the user has viewed.  Here, a users favorite movies will be displayed at the top of the page, with the remaining movies displayed below.
     - this page will also be an ajax loaded page.
     - sort results buttons will be ajax buttons that sort the already loaded movies.
-8. Movie Sort function
+8. Movie Sort function (working)
     - this will be an ajax function to reorder the already loaded movies.
 
 

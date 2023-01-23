@@ -2,12 +2,13 @@ import os
 
 from flask import Flask, render_template, request, redirect, flash, jsonify
 from flask import session, g
+from sqlalchemy import desc, asc
 from sqlalchemy.exc import IntegrityError
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_cors import CORS
 
 from services import movie_search, movie_search_by_id
-from forms import UserAddForm, LoginForm, UserEditForm, UserDeleteForm, MovieSearchForm, MovieAddEditForm, MyMoviesFilterForm, MyMoviesSortForm
+from forms import UserAddForm, LoginForm, UserEditForm, UserDeleteForm, MovieSearchForm, MovieAddEditForm
 from models import db, connect_db, User, Movie
 
 app = Flask(__name__)
@@ -220,9 +221,9 @@ def delete_profile():
 
 
 ###############################################################################
-# movie routes (internal api routes)
+# movie routes
 
-@app.route('/movies')
+@app.route('/movies', methods=["GET", "POST"])
 def show_my_movies():
     """Show all users movies."""
 
@@ -230,22 +231,71 @@ def show_my_movies():
         flash("Please login!", "danger")
         return redirect("/login")
 
-    filterForm = MyMoviesFilterForm()
-    sortForm = MyMoviesSortForm()
 
-    if request.args:
+    # if there's a filter get our movies with the filter
+    if request.args.get('filter'):
+
         print("\n***************")
-        print(request.args.get('filter'))
-        print(request.args.get('sort'))
-        print(request.args.get('order'))
+        print("Filter detected!")
+        print("Args: ", request.args['filter'])
         print("***************\n")
+        
+
+        # # if there's a sort option, apply the sort with our sort order
+        # if request.args.get('sort'):
+
+        #     print("\n***************")
+        #     print("Sort detected!")
+        #     print("***************\n")
+
+        #     request.args.get('sort')
+
+        #     if request.args.get('order') == "asc":
+        #         movies = movies.order_by(asc(request.args.get('sort')))
+
+        #     if request.args.get('order') == "desc":
+        #         movies = movies.order_by(desc(request.args.get('sort')))
+
+        #     return render_template('movies.html', user=g.user, movies=movies)
+
+
+        movies = Movie.query.filter_by(user_id=g.user.id, favorite=True).all()
+
+        return render_template('movies.html', user=g.user, movies=movies, filters=['favorites'])
+
+    # if there's no filter, just get all our movies and check for a sort
     else:
+        
         print("\n***************")
-        print("No args")
+        print("No filter detected!")
         print("***************\n")
 
-    
-    return render_template('movies.html', user=g.user, filterForm=filterForm, sortForm=sortForm)
+
+        # # if there's a sort option, apply the sort with our sort order
+        # if request.args.get('sort'):
+
+        #     print("\n***************")
+        #     print("Sort detected!")
+        #     print("***************\n")
+
+        #     request.args.get('sort')
+
+        #     if request.args.get('order') == "asc":
+        #         movies = movies.order_by(asc(request.args.get('sort')))
+
+        #     if request.args.get('order') == "desc":
+        #         movies = movies.order_by(desc(request.args.get('sort')))
+
+        #     print("\n***************")
+        #     print("No sort detected")
+        #     print("***************\n")
+
+        #     return render_template('movies.html', user=g.user, movies=movies)
+
+
+        movies = Movie.query.filter_by(user_id=g.user.id).all()
+
+        return render_template('movies.html', user=g.user, movies=movies)
     
 
 @app.route("/movie/<movie_id>", methods=["GET", "POST"])
@@ -405,6 +455,7 @@ def handle_movie(movie_id):
     return render_template("movie-detail.html", form=form, movie=movie, movie_in_db=movie_in_db)
 
 
+# internal api routes
 @app.route("/movie/<movie_id>", methods=["DELETE"])
 def delete_movie(movie_id):
     """Delete a movie from our db."""
@@ -419,6 +470,7 @@ def delete_movie(movie_id):
     return (resp, 200)
 
 
+# internal api routes
 @app.route('/movie/<movie_id>/favorite', methods=["POST"])
 def add_remove_favorite(movie_id):
     """Add or remove a movie as a favorite"""
@@ -429,6 +481,8 @@ def add_remove_favorite(movie_id):
 
     db.session.commit();
 
+    # send back our boolean value for "favorite"so we can 
+    # keep the front end in sync with our database data
     resp = jsonify({"message": "success", "favorite": m.favorite})
 
     return (resp, 200)

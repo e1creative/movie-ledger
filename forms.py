@@ -63,29 +63,3 @@ class MovieAddEditForm(FlaskForm):
                 )
     date_viewed = DateField("Date Viewed", validators=[Optional()])
     date_added = HiddenField("data_added")
-
-
-class MyMoviesFilterForm(FlaskForm):
-    """My movies filter form on the my list page."""
-
-    favorites = BooleanField("Favorites")
-
-
-class MyMoviesSortForm(FlaskForm):
-    """My movies sort form on the my list page."""
-
-    sort = SelectField("Sort",
-                choices=[
-                    ("", ""),
-                    ("title", "Title"),
-                    ("date_added", "Date Added"),
-                    ("date_viewed", "Date Viewed"),
-                    ]
-                )
-    order = RadioField("Order",
-                choices=[
-                    ("asc", "Asc."),
-                    ("desc", "Desc."),
-                    ],
-                
-                )

@@ -218,7 +218,7 @@ nav a { text-decoration: none; }
 
 /* my-list sort & filter form */
 .ml__my-list--sort-filter-container {
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
 }
 .ml__my-list--sort-filter-form * {
     margin: 0;
@@ -256,8 +256,12 @@ nav a { text-decoration: none; }
 .ml__my-list--sort-filter-buttons {
     justify-content: space-between;
 }
+/* target "apply" and "reset" buttons */
 .ml__my-list--sort-filter-buttons > * {
     flex-grow: 1;
+}
+.ml__my-list--sort-filter-apply-button.disabled {
+    pointer-events: none;
 }
 
 .ml__my-list--page-title {
