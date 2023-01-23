@@ -263,6 +263,19 @@ nav a { text-decoration: none; }
 .ml__my-list--sort-filter-apply-button.disabled {
     pointer-events: none;
 }
+.ml__my-list--sort-note-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2.5rem; 
+    padding: .25em 0;
+    border-top: 1px dotted var(--border-color);
+    border-bottom: 1px dotted var(--border-color);
+}
+.ml__my-list--sort-note { 
+    margin: 0; 
+}
 
 .ml__my-list--page-title {
     margin-bottom: 2rem;
@@ -331,6 +344,16 @@ nav a { text-decoration: none; }
     border: 1px solid #a00000;
     border-radius: 3px;
 }
+
+.ml__my-favorites--heading-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+}
+.ml__my-favorites--heading-container > * { margin: 0; }
 
 .ml__edit-profile--edit-container {
     border-bottom: 1px dotted var(--border-color);

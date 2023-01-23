@@ -2,14 +2,18 @@ import os
 
 from flask import Flask, render_template, request, redirect, flash, jsonify
 from flask import session, g
-from sqlalchemy import desc, asc
 from sqlalchemy.exc import IntegrityError
+
+# import text so we can use fstrings in our filter/sort queries
+from sqlalchemy.sql import text
+
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_cors import CORS
 
-from services import movie_search, movie_search_by_id
-from forms import UserAddForm, LoginForm, UserEditForm, UserDeleteForm, MovieSearchForm, MovieAddEditForm
+from forms import (UserAddForm, LoginForm, UserEditForm, 
+                    UserDeleteForm, MovieSearchForm, MovieAddEditForm )
 from models import db, connect_db, User, Movie
+from services import movie_search, movie_search_by_id
 
 app = Flask(__name__)
 cors = CORS()
@@ -231,71 +235,103 @@ def show_my_movies():
         flash("Please login!", "danger")
         return redirect("/login")
 
+    # initialize our **kwargs for filter_by()
+    kwargs = {"user_id": g.user.id}
 
-    # if there's a filter get our movies with the filter
+    # initalize our filter flags list to pass to our template
+    filters = {}
+
+    ##############################################
+    # filter check
+
+    # if there's a filter append to our filter_by() **kwargs
+    # and also add to our filter flags list arg
     if request.args.get('filter'):
 
         print("\n***************")
         print("Filter detected!")
         print("Args: ", request.args['filter'])
         print("***************\n")
-        
 
-        # # if there's a sort option, apply the sort with our sort order
-        # if request.args.get('sort'):
+        kwargs["favorite"] = True
+        filters["filters"] = ['favorites']
 
-        #     print("\n***************")
-        #     print("Sort detected!")
-        #     print("***************\n")
-
-        #     request.args.get('sort')
-
-        #     if request.args.get('order') == "asc":
-        #         movies = movies.order_by(asc(request.args.get('sort')))
-
-        #     if request.args.get('order') == "desc":
-        #         movies = movies.order_by(desc(request.args.get('sort')))
-
-        #     return render_template('movies.html', user=g.user, movies=movies)
-
-
-        movies = Movie.query.filter_by(user_id=g.user.id, favorite=True).all()
-
-        return render_template('movies.html', user=g.user, movies=movies, filters=['favorites'])
-
-    # if there's no filter, just get all our movies and check for a sort
+    # if there's no filter, print to console and move on
     else:
         
         print("\n***************")
         print("No filter detected!")
         print("***************\n")
 
+    ##############################################
+    # sort check
 
-        # # if there's a sort option, apply the sort with our sort order
-        # if request.args.get('sort'):
+    # if there's a sort option, begin our sort_str
+    if request.args.get('sort'):
 
-        #     print("\n***************")
-        #     print("Sort detected!")
-        #     print("***************\n")
+        print("\n***************")
+        print("Sort detected!")
+        print("Sort: ", request.args['sort'])
+        print("***************\n")
 
-        #     request.args.get('sort')
+        # initialize our sort_str
+        sort_str = ""
 
-        #     if request.args.get('order') == "asc":
-        #         movies = movies.order_by(asc(request.args.get('sort')))
+        # append to our sort_str based on the query string arg
+        # and add to our filters flags list arg
+        if request.args['sort'] == "title":
+            sort_str = sort_str + "title"
+            filters["sort"] = 'title'
+        if request.args['sort'] == "year":
+            sort_str = sort_str + "year"
+            filters["sort"] = 'year'
+        if request.args['sort'] == "date_added":
+            sort_str = sort_str + "date_added"
+            filters["sort"] = 'date_added'
+        if request.args['sort'] == "date_viewed":
+            sort_str = sort_str + "date_viewed"
+            filters["sort"] = 'date_viewed'
 
-        #     if request.args.get('order') == "desc":
-        #         movies = movies.order_by(desc(request.args.get('sort')))
+        # if there's an order, append the order to our sort_str
+        if request.args.get("order"):
 
-        #     print("\n***************")
-        #     print("No sort detected")
-        #     print("***************\n")
+            print("\n***************")
+            print("Order detected!")
+            print("Order: ", request.args['order'])
+            print("***************\n")                
 
-        #     return render_template('movies.html', user=g.user, movies=movies)
+            # ascending order
+            if request.args['order'] == "asc":
+                sort_str = sort_str + " asc"
+                filters["order"] = 'ascending'
 
+            # descending order
+            if request.args['order'] == "desc":
+                sort_str = sort_str + " desc"
+                filters["order"] = 'descending'
 
-        movies = Movie.query.filter_by(user_id=g.user.id).all()
+        # if there's NO order arg, notify our console and move on
+        else:
+            print("\n***************")
+            print("No order detected (order default)")
+            print("***************\n")
 
-        return render_template('movies.html', user=g.user, movies=movies)
+        # make our final query using our built sort_str
+        movies = Movie.query.filter_by(**kwargs).order_by(text(sort_str)).all()
+
+        # be sure to pass the necessary flags to the template
+        return render_template('movies.html', user=g.user, movies=movies, filters=filters)
+
+    else:
+        # if there's NO sort option notify our console and move on
+        print("\n***************")
+        print("No sort detected")
+        print("***************\n")
+
+    # our final query with filter_by(**kwargs) only
+    movies = Movie.query.filter_by(**kwargs).all()
+
+    return render_template('movies.html', user=g.user, movies=movies, filters=filters)
     
 
 @app.route("/movie/<movie_id>", methods=["GET", "POST"])

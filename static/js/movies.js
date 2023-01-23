@@ -103,23 +103,23 @@ function toggleFavorite(e){
 /**
  * ajax filtering functionality
  */
-const applyButton = document.getElementById("myListFilterButton")
+// const applyButton = document.getElementById("myListFilterButton")
 
 // filter input
-const favoriteFilter = document.getElementById("favorites")
+// const favoriteFilter = document.getElementById("favorites")
 
 /**
  * disable apply button if no filter is selected
  */
-favoriteFilter.addEventListener("click", checkIfChecked)
+// favoriteFilter.addEventListener("click", checkIfChecked)
 
-function checkIfChecked() {
-  if (favoriteFilter.checked){
-    applyButton.classList.remove("disabled")
-  } else {
-    applyButton.classList.add("disabled")
-  }
-}
+// function checkIfChecked() {
+//   if (favoriteFilter.checked){
+//     applyButton.classList.remove("disabled")
+//   } else {
+//     applyButton.classList.add("disabled")
+//   }
+// }
 
 
 // // sort inputs
