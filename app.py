@@ -7,7 +7,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from flask_cors import CORS
 
 from services import movie_search, movie_search_by_id
-from forms import UserAddForm, LoginForm, UserEditForm, UserDeleteForm, MovieSearchForm, MovieAddEditForm
+from forms import UserAddForm, LoginForm, UserEditForm, UserDeleteForm, MovieSearchForm, MovieAddEditForm, MyMoviesFilterForm, MyMoviesSortForm
 from models import db, connect_db, User, Movie
 
 app = Flask(__name__)
@@ -229,8 +229,23 @@ def show_my_movies():
     if not g.user:
         flash("Please login!", "danger")
         return redirect("/login")
+
+    filterForm = MyMoviesFilterForm()
+    sortForm = MyMoviesSortForm()
+
+    if request.args:
+        print("\n***************")
+        print(request.args.get('filter'))
+        print(request.args.get('sort'))
+        print(request.args.get('order'))
+        print("***************\n")
+    else:
+        print("\n***************")
+        print("No args")
+        print("***************\n")
+
     
-    return render_template('movies.html', user=g.user)
+    return render_template('movies.html', user=g.user, filterForm=filterForm, sortForm=sortForm)
     
 
 @app.route("/movie/<movie_id>", methods=["GET", "POST"])

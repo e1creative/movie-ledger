@@ -57,7 +57,7 @@ movieSearchForm.addEventListener('submit', function(e) {
 
       let newP = document.createElement("p");
       newP.classList.add("ml__search-result--year");
-      newP.innerText = element["Year"];
+      newP.innerText = "(" + element["Year"] + ")";
       newA.appendChild(newP);
       
       newLI.appendChild(newA);

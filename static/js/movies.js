@@ -1,4 +1,4 @@
-const removeButtons = document.getElementsByTagName("button")
+const removeButtons = document.getElementsByClassName("ml__my-movies--remove-button")
 const favButtons = document.getElementsByTagName("i")
 
 

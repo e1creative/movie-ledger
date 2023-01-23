@@ -3,32 +3,71 @@
 {% block pagetitle %}Movie Ledger | Profile{% endblock %}
 
 {% block pagecontent %}
-<h1 class="ml__my-movies--page-title">{{ user.username }}'s Ledger</h1>
+<h1 class="ml__my-list--page-title">{{ user.username }}'s Ledger</h1>
 {% if not user.movies %}
 <h3>No movies found....</h3>
 <a class="button" href="/movie-search">Search Now</a>
 {% endif %}
 {% if user.movies %}
-<ul id="myMovieList" class="ml__my-movies">
+<div class="ml__my-list--sort-filter-container">
+    <h3 class="ml__my-list--sort-filter-heading">Sort & Filter</h3>
+    <form class="ml__my-list--sort-filter-form">
+
+        <div class="ml__my-list--filter">
+            <span>Filter by: </span>
+            <div>
+                <input type="checkbox" id="favorites" name="filter" value="favorites">
+                <label for="favorites">Favorites</label> 
+            </div>
+
+        </div>
+
+        <div class="ml__my-list--sort">
+            <div>
+                <select id="sort" name="sort">
+                    <option value="">Default</option>
+                    <option value="title">Title</option>
+                    <option value="date_added">Date Added</option>
+                    <option value="date_viewed">Date Viewed</option>
+                </select>
+            </div>
+            <div>
+                <input type="radio" id="order-asc" name="order" value="asc">
+                <label for="order-asc">Asc</label>
+            </div>
+            <div>
+                <input type="radio" id="order-desc" name="order" value="desc">
+                <label for="order-desc">Desc</label>
+            </div>
+        </div>
+        <div class="ml__my-list--sort-filter-buttons">
+            <button class="ml__my-list--sort-filter-apply-button" type="submit">Apply</button>
+            <a class="ml__my-list--sort-filter-reset-button button" href="/movies">Reset</a>
+        </div>
+    </form>
+</div>
+<ul id="myMovieList" class="ml__my-list">
     {% for movie in user.movies %}
-        <li class="ml__my-movies--item">
-            {% if movie.favorite %}
-                <i class="fa-star fas ml__my-movies--movie-fav" data-id="{{ movie['imdb_id'] }}"></i>
-            {% else %}
-                <i class="far fa-star ml__my-movies--movie-fav" data-id="{{ movie['imdb_id'] }}"></i>
-            {% endif %}
+        <li class="ml__my-list--item">
             <a href="/movie/{{ movie['imdb_id'] }}">
-                <img class="ml__my-movies--movie-image" src="{{ movie.imdb_img }}">
-                <div class="ml__my-movies--movie-info-container">
-                    <h3 class="ml__my-movies--movie-title">{{ movie.title }}</h3>
-                    <p class="ml__my-movies--movie-year">{{ movie.year }}</p>
-                    <p class="ml__my-movies--movie-actors">{{ movie.actors }}</p>
-                    <p class="ml__my-movies--movie-actors">Date Viewed: {{ movie.date_viewed }}</p>
-                    <p class="ml__my-movies--movie-actors">Date Added: {{ movie.date_added }}</p>
-                    <p class="ml__my-movies--movie-platform">Platform: {{ movie.platform }}</p>
+                <img class="ml__my-list--image" src="{{ movie.imdb_img }}">
+                <div class="ml__my-list--info-container">
+                    <h3 class="ml__my-list--title">{{ movie.title }}</h3>
+                    <p class="ml__my-list--year">({{ movie.year }})</p>
+                    <!-- <p class="ml__my-list--actors">{{ movie.actors }}</p> -->
+                    <p class="ml__my-list--date-viewed">Date Viewed: {{ movie.date_viewed }}</p>
+                    <p class="ml__my-list--date-added">Date Added: {{ movie.date_added }}</p>
+                    <p class="ml__my-list--platform">Platform: {{ movie.platform }}</p>
                 </div>
             </a>
-            <button class="ml__my-movies--remove-button" data-id="{{ movie['imdb_id'] }}">X</button>
+            <div class="ml__my-list--functions-container">
+                {% if movie.favorite %}
+                    <i class="fa-star fas ml__my-list--fav" data-id="{{ movie['imdb_id'] }}"></i>
+                {% else %}
+                    <i class="far fa-star ml__my-list--fav" data-id="{{ movie['imdb_id'] }}"></i>
+                {% endif %}
+                <button class="ml__my-list--remove-button" data-id="{{ movie['imdb_id'] }}">X</button>
+            </div>
         </li>
     {% endfor %}
 </ul>

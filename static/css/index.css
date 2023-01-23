@@ -2,6 +2,14 @@
 
 :root{
     --border-color: #666;
+    --body-text-color: #eee;
+    --body-link-color: #eee;
+    --nav-link-color: #111;
+
+    --danger-red: #F55;
+    --success-green: #0F9;
+    --warning-red: #F00;
+    --error-red: #F00;
 }
 
 * { box-sizing: border-box; }
@@ -9,38 +17,59 @@
 body {
     /* background-image: url("/static/images/US-en-20230109-popsignuptwoweeks-perspective_alpha_website_large.jpg"); */
     background-color: #111;
-    color: white;
+    color: var(--body-text-color);
     font-family: 'Montserrat', sans-serif;
     font-weight: 400;
-    letter-spacing: .5px;
     line-height: 1.8;
     min-height: 100vh;
 }
 
-:not(.ml__content-container a) { text-decoration: none; }
-body a { color: #aaa; }
-nav a { color: #333; }
+a { color: var(--link-color); }
 
+/* flash messages - across the page, under the header */
 .flash { 
-    font-weight: 400;
     text-align: center;
     margin:0;
     padding: .25em 0;
     color: #000000;
 }
-.danger { background-color: #F55; }
-.success { background-color: #0F9; }
 
+.danger { background-color: var(--danger-red); }
+.success { background-color: var(--success-green); }
+.warning { color: var(--warning-red); }
 /* for form field errors */
-.error {
-    color: #ff0000;
-    font-size: .85rem;
-}
+.error { color: var(--error-red); }
 
-.ml__main {
-    min-height: 100vh;
+/* label/input sections */
+form div {
     display: flex;
     flex-direction: column;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+form label { margin-bottom: .5rem; }
+
+form input { padding: .5em; }
+
+button {
+    margin-top: 1rem;
+    padding: .5em 2em;
+    text-transform: uppercase;
+    border-width: 0;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.button {
+    padding: .5em 2em;
+    background-color: #FFF;
+    line-height: 1.15; /* to match the normalize.css button line-height */
+    text-transform: uppercase;
+    text-decoration: none;
+    text-align: center;
+    color: #000;
+    border-radius: 3px;
 }
 
 nav {
@@ -53,61 +82,24 @@ nav {
     align-items: center;
 }
 
+nav a { text-decoration: none; }
+
+.nav-brand a { font-weight: 600; letter-spacing: -1px; }
+
+.nav-links a { color: var(--nav-link-color); margin: 0 .65em; letter-spacing: normal;}
+
+.ml__main {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
 .ml__main main {
     flex-grow: 1;
     display: flex;
     justify-content: center;
     align-items: center;
 }
-
-footer {
-    padding: .5em 1rem;
-    background-color: #222;
-    font-size: .6rem;
-    letter-spacing: 1.1px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.nav-brand a { font-weight: 600; letter-spacing: -1px; }
-
-.nav-links a { margin: 0 .65em; letter-spacing: normal;}
-
-form div {
-    display: flex;
-    flex-direction: column;
-    font-size: 1rem;
-    margin-bottom: 1rem;
-}
-
-form label {
-    margin-bottom: .5rem;
-}
-
-form input {
-    padding: .5em;
-}
-
-button {
-    margin-top: 1rem;
-    text-transform: uppercase;
-    padding: .5rem 2rem;
-    border-width: 0;
-    border-radius: 3px;
-    cursor: pointer;
-}
-
-.button {
-    text-transform: uppercase;
-    text-decoration: none;
-    padding: .5rem 2rem;
-    color: #000;
-    background-color: #FFF;
-    border-radius: 3px;
-    line-height: normal;
-}
-
 .ml__content-container {
     padding: 2rem;
     display: flex;
@@ -168,13 +160,18 @@ button {
 }
 .ml__search-result--image {
     width: 100%;
+    margin-bottom: 1rem;
 }
 .ml__search-result--title {
     margin: 0;
-    font-weight: 400;
+    font-weight: 600;
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.15;
 }
 .ml__search-result--year {
     margin: 0;
+    font-size: .85rem;
 }
 .ml__search-result button {
     width: 100%;
@@ -189,7 +186,9 @@ button {
     text-align: center;
     line-height: 1.15; /* set line height to match normalize line height */
 }
+
 .ml__search-result--movie-in-list { color: #FFF }
+
 .ml__search-result--add-movie-success { color: #0F9; }
 
 .ml__movie-details {
@@ -202,8 +201,11 @@ button {
 .ml__movie-details--item {
     margin-bottom: .5rem;
 }
+
 .ml__movie-details--edit-title { margin-bottom: 0; }
+
 .ml__movie-details--edit-note { margin-top: 0; margin-bottom: 2rem; }
+
 .ml__movie-details--add-edit-form-favorite {
     flex-direction: row-reverse;
     justify-content: flex-end;
@@ -214,17 +216,61 @@ button {
     margin-bottom: 0;
 }
 
-.ml__my-movies--page-title {
-    border-bottom: 1px dotted var(--border-color);
+/* my-list sort & filter form */
+.ml__my-list--sort-filter-container {
+    margin-bottom: 3rem;
+}
+.ml__my-list--sort-filter-form * {
+    margin: 0;
+}
+.ml__my-list--filter,
+.ml__my-list--sort,
+.ml__my-list--sort-filter-buttons {
+    padding: 1rem 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+    margin: 0;
 }
 
-.ml__my-movies {
+/* div in the filter form */
+.ml__my-list--filter {
+    border-top: 1px dotted var(--border-color);
+    border-bottom: 1px dotted var(--border-color);
+}
+/* sort form */
+.ml__my-list--sort {
+    border-bottom: 1px dotted var(--border-color);
+}
+.ml__my-list--filter > div,
+.ml__my-list--sort > div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: .5rem;
+    margin: 0;
+}
+.ml__my-list--sort-filter-buttons {
+    justify-content: space-between;
+}
+.ml__my-list--sort-filter-buttons > * {
+    flex-grow: 1;
+}
+
+.ml__my-list--page-title {
+    margin-bottom: 2rem;
+}
+
+.ml__my-list {
     list-style: none;
     padding: 0;
     margin-top: 1rem;
 }
 
-.ml__my-movies--item {
+.ml__my-list--item {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -234,26 +280,23 @@ button {
     border-bottom: 1px dotted var(--border-color);
 
 }
-.ml__my-movies--item a {
+.ml__my-list--item a {
     display: flex;
-    gap: 1rem;
+    gap: 1.25rem;
     align-items: center;
     flex-grow: 1;
     text-decoration: none;
 }
-/* favorite star */
-.fa-star { font-size: 1rem; }
-.fa-star.far { color: #fff; }
-.fa-star.fas { color: #0F9; }
 
-.ml__my-movies--movie-image {
+.ml__my-list--image {
     width: 75px;
     height: 100%;
 }
-.ml__my-movies--movie-info-container > *:not(h3) {
+.ml__my-list--info-container > *:not(h3) {
     font-size: .85rem;
+    margin: 0;
 }
-.ml__my-movies--movie-title {
+.ml__my-list--title {
     margin: 0;
     font-weight: 600;
     letter-spacing: normal;
@@ -261,23 +304,24 @@ button {
     line-height: 1.15;
 }
 
-.ml__my-movies--movie-year {
-    margin: 0;
+.ml__my-list--functions-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
 }
 
-.ml__my-movies--movie-actors {
-    margin: 0;
-}
+/* favorite star */
+.fa-star { font-size: 1rem; cursor: pointer; }
+.fa-star.far { color: #fff; }
+.fa-star.fas { color: #0F9; }
 
-.ml__my-movies--movie-platform {
-    margin: 0;
-}
-
-.ml__my-movies--remove-button {
+.ml__my-list--remove-button {
     margin-top: 0;
     font-weight: 600;
-    font-size: .6rem;
-    padding: .5em .75em;
+    font-size: .64rem;
+    padding: .25em .5em;
     background-color: transparent;
     color: #a00000;
     border: 1px solid #a00000;
@@ -290,6 +334,12 @@ button {
     margin-bottom: 2rem;
 }
 
-.warning {
-    color: #F00;
+footer {
+    padding: .5em 1rem;
+    background-color: #222;
+    font-size: .6rem;
+    letter-spacing: 1.1px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }

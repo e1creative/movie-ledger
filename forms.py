@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, HiddenField, BooleanField, SelectField, DateField
+from wtforms import StringField, PasswordField, HiddenField, BooleanField, SelectField, DateField, RadioField
 
 from wtforms.validators import DataRequired, Email, Length, Optional
 import email_validator
@@ -64,7 +64,28 @@ class MovieAddEditForm(FlaskForm):
     date_viewed = DateField("Date Viewed", validators=[Optional()])
     date_added = HiddenField("data_added")
 
-    #     <input type="hidden" name="imdb_id" value="{{ movie['imdbID'] }}">
-    # <input type="hidden" name="title" value="{{ movie['Title'] }}">
-    # <input type="hidden" name="year" value="{{ movie['Year'] }}">
-    # <input type="hidden" name="imdb_img" value="{{ movie['Poster'] }}">
+
+class MyMoviesFilterForm(FlaskForm):
+    """My movies filter form on the my list page."""
+
+    favorites = BooleanField("Favorites")
+
+
+class MyMoviesSortForm(FlaskForm):
+    """My movies sort form on the my list page."""
+
+    sort = SelectField("Sort",
+                choices=[
+                    ("", ""),
+                    ("title", "Title"),
+                    ("date_added", "Date Added"),
+                    ("date_viewed", "Date Viewed"),
+                    ]
+                )
+    order = RadioField("Order",
+                choices=[
+                    ("asc", "Asc."),
+                    ("desc", "Desc."),
+                    ],
+                
+                )
