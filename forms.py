@@ -37,12 +37,6 @@ class UserDeleteForm(FlaskForm):
     password = PasswordField('Enter Password to Confirm', validators=[DataRequired(), Length(min=6)])
 
 
-class MovieSearchForm(FlaskForm):
-    """Movie search form."""
-
-    search_term = StringField('Search Term', validators=[DataRequired()])
-
-
 class MovieAddEditForm(FlaskForm):
     """Movie add form on the movie detail page."""
 

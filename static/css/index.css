@@ -191,6 +191,8 @@ nav a { text-decoration: none; }
 
 .ml__search-result--add-movie-success { color: #0F9; }
 
+.ml__search-result--add-movie-success a { display: inline; }
+
 .ml__movie-details {
     padding: 0;
     padding-bottom: 1rem;

@@ -11,7 +11,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from flask_cors import CORS
 
 from forms import (UserAddForm, LoginForm, UserEditForm, 
-                    UserDeleteForm, MovieSearchForm, MovieAddEditForm )
+                    UserDeleteForm, MovieAddEditForm )
 from models import db, connect_db, User, Movie
 from services import movie_search, movie_search_by_id
 
@@ -227,13 +227,16 @@ def delete_profile():
 ###############################################################################
 # movie routes
 
-@app.route('/movies', methods=["GET", "POST"])
+@app.route('/movies')
 def show_my_movies():
-    """Show all users movies."""
+    """Show all users movies, adding filters or sort if selected."""
 
     if not g.user:
         flash("Please login!", "danger")
         return redirect("/login")
+
+    ##############################################
+    # initialize
 
     # initialize our **kwargs for filter_by()
     kwargs = {"user_id": g.user.id}
@@ -248,31 +251,14 @@ def show_my_movies():
     # and also add to our filter flags list arg
     if request.args.get('filter'):
 
-        print("\n***************")
-        print("Filter detected!")
-        print("Args: ", request.args['filter'])
-        print("***************\n")
-
         kwargs["favorite"] = True
         filters["filters"] = ['favorites']
-
-    # if there's no filter, print to console and move on
-    else:
-        
-        print("\n***************")
-        print("No filter detected!")
-        print("***************\n")
 
     ##############################################
     # sort check
 
     # if there's a sort option, begin our sort_str
     if request.args.get('sort'):
-
-        print("\n***************")
-        print("Sort detected!")
-        print("Sort: ", request.args['sort'])
-        print("***************\n")
 
         # initialize our sort_str
         sort_str = ""
@@ -293,12 +279,7 @@ def show_my_movies():
             filters["sort"] = 'date_viewed'
 
         # if there's an order, append the order to our sort_str
-        if request.args.get("order"):
-
-            print("\n***************")
-            print("Order detected!")
-            print("Order: ", request.args['order'])
-            print("***************\n")                
+        if request.args.get("order"):           
 
             # ascending order
             if request.args['order'] == "asc":
@@ -310,25 +291,15 @@ def show_my_movies():
                 sort_str = sort_str + " desc"
                 filters["order"] = 'descending'
 
-        # if there's NO order arg, notify our console and move on
-        else:
-            print("\n***************")
-            print("No order detected (order default)")
-            print("***************\n")
 
-        # make our final query using our built sort_str
+        # WITH SORT TERM: make our final query using our built sort_str
         movies = Movie.query.filter_by(**kwargs).order_by(text(sort_str)).all()
 
         # be sure to pass the necessary flags to the template
         return render_template('movies.html', user=g.user, movies=movies, filters=filters)
 
-    else:
-        # if there's NO sort option notify our console and move on
-        print("\n***************")
-        print("No sort detected")
-        print("***************\n")
 
-    # our final query with filter_by(**kwargs) only
+    # NO SORT TERM: our final query with filter_by(**kwargs) only
     movies = Movie.query.filter_by(**kwargs).all()
 
     return render_template('movies.html', user=g.user, movies=movies, filters=filters)
@@ -528,7 +499,7 @@ def add_remove_favorite(movie_id):
 # external api routes
 
 # search movies from the omdb database.  must be logged in!
-@app.route("/movie-search", methods=["GET", "POST"])
+@app.route("/movie-search")
 def search_movies():
     """Get all the movies based on a search term from form data"""
      
@@ -536,31 +507,44 @@ def search_movies():
     if not g.user:
         flash("Please login!", "danger")
         return redirect("/login")
-
     
-    form = MovieSearchForm()
+    # if form.validate_on_submit():
+    if request.args.get('term'):
+        
+        print("\n***************")
+        print("Search term:", request.args['term'])
+        print("***************\n")
 
-    if form.validate_on_submit():
-        search_term = form.search_term.data
+        search_term = request.args['term']
 
         # make the call to our external api
-        # results will be a list from our services.py file
+        # results will be a python dictionary (from services.py)
         results = movie_search(search_term)
 
-        # before we send our results to the user, check if any of the
-        # returned movies are already in our list and if so, set an attribute
-        user_movies = [movie.imdb_id for movie in g.user.movies]
+        # if we get a proper reesponse, run our check to see if
+        # any of the returned result are already in our list
+        if results['Response'] == "True":
+            print("\n***************")
+            print("Results gotten")
+            print("***************\n")
 
-        for movie in results['Search']:
-            if movie['imdbID'] in user_movies:
-                movie["ml_inList"] = True
+            # before we send our results to the user, check if any of the
+            # returned movies are already in our list and if so, 
+            # set an attribute ml_inList
+            user_movies = [movie.imdb_id for movie in g.user.movies]
 
-        # we use axios to make the ajax request
-        resp = jsonify(results['Search'])
+            for movie in results['Search']:
+                if movie['imdbID'] in user_movies:
+                    movie["ml_inList"] = True
         
-        return (resp, 200)
-    
-    return render_template("movie-search.html", form=form, user=g.user)
+        # render our template and pass the results of the api request
+        # along with the search term (so we can create our search note)
+        #
+        # we'll handle the rendering of our data in our template
+        return render_template("movie-search.html", results=results, search_term=search_term)
+
+    # no search term submitted, so we just render a normal page
+    return render_template("movie-search.html", user=g.user)
 
 
 ###############################################################################

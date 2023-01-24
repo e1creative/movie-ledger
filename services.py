@@ -14,7 +14,7 @@ def movie_search(search_term, page_num=1):
     """Make the external search call to the omdb movie database!"""
     
     api_url = f"{API_BASE_URL}s={search_term}&page={page_num}"
-    
+        
     api_resp = requests.get(api_url)
 
     # the api returns a reponse with json
