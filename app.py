@@ -508,42 +508,57 @@ def search_movies():
         flash("Please login!", "danger")
         return redirect("/login")
     
-    # if form.validate_on_submit():
+    # if a search term is provided, process the search
     if request.args.get('term'):
-        
-        print("\n***************")
-        print("Search term:", request.args['term'])
-        print("***************\n")
 
         search_term = request.args['term']
 
+        # get our requested page from the query string.  
+        # 
+        # if there is no page in the
+        # query string, default to page 1, and pass to our api req.
+        # 
+        # page needs to contain an int so that we can check: 
+        # if page > 1 then render our prev page when necessary.
+        page = int(request.args['page']) if request.args.get('page') else 1 
+
         # make the call to our external api
+        #
         # results will be a python dictionary (from services.py)
-        results = movie_search(search_term)
+        results_curr = movie_search(search_term, page=page)
 
-        # if we get a proper reesponse, run our check to see if
-        # any of the returned result are already in our list
-        if results['Response'] == "True":
-            print("\n***************")
-            print("Results gotten")
-            print("***************\n")
+        # if we get an search results in our CURRENT api call, 
+        # run a check to see if any of the returned results 
+        # are already in our list
+        #
+        # if so, set a new attribute "ml_inList" on our movie
+        #
+        # we can use this attribute to determine if we show an
+        # "Add to My List"  button or a note "Already in My List"
+        if results_curr['Response'] == "True":
 
-            # before we send our results to the user, check if any of the
-            # returned movies are already in our list and if so, 
-            # set an attribute ml_inList
             user_movies = [movie.imdb_id for movie in g.user.movies]
 
-            for movie in results['Search']:
+            for movie in results_curr['Search']:
                 if movie['imdbID'] in user_movies:
                     movie["ml_inList"] = True
         
+        # make the call to our external api for the NEXT page
+        #
+        # pass the "Rsponse" returned to our template
+        #
+        # based on the val of "Response" we can render a next_page link or not
+        results_next = movie_search(search_term, page=page+1)
+
+        next_page = results_next['Response']
+
         # render our template and pass the results of the api request
         # along with the search term (so we can create our search note)
         #
         # we'll handle the rendering of our data in our template
-        return render_template("movie-search.html", results=results, search_term=search_term)
+        return render_template("movie-search.html", results=results_curr, search_term=search_term, page=page, next_page=next_page)
 
-    # no search term submitted, so we just render a normal page
+    # no search term submitted, so we just render our starting search  page
     return render_template("movie-search.html", user=g.user)
 
 

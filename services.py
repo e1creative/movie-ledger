@@ -10,10 +10,10 @@ else:
 
 API_BASE_URL = f"http://www.omdbapi.com/?apikey={API_KEY}&"
 
-def movie_search(search_term, page_num=1):
+def movie_search(search_term, page=1):
     """Make the external search call to the omdb movie database!"""
     
-    api_url = f"{API_BASE_URL}s={search_term}&page={page_num}"
+    api_url = f"{API_BASE_URL}s={search_term}&page={page}"
         
     api_resp = requests.get(api_url)
 

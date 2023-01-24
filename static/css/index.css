@@ -149,6 +149,12 @@ nav a { text-decoration: none; }
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
 }
+.ml__search-results--pagination-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
 .ml__search-result {
     display: flex;
     flex-direction: column;
