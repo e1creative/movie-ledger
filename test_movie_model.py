@@ -209,11 +209,12 @@ class MovieModelTestCase(TestCase):
 
 
     def test_movie_user_relationship(self):
-        """Does the User relationship work properly on the Movie model?"""
+        """Does the User relationship work properly on the movie model?"""
 
         # get our test user 1
         u = User.query.filter_by(username="testuser").first()
 
+        # add a movie with the recently created user
         m = Movie(
                 imdb_id="testID456",
                 user_id=u.id,
@@ -225,7 +226,13 @@ class MovieModelTestCase(TestCase):
         db.session.add(m)
         db.session.commit()
 
+        # we should be able access details of our user from the movie model
+        # username should be the same regardless of how we access it
         self.assertEqual(m.user.username, u.username)
+        # we should find our movie id in our u.movies list
+        # note: since there is only one movie in our list, we can access
+        #   using the index of the list
+        self.assertEqual(m.imdb_id, u.movies[0].imdb_id)
 
 
     def test_movie_user_delete(self):

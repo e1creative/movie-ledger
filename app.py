@@ -334,7 +334,9 @@ def handle_movie(movie_id):
 
     form = MovieAddEditForm()
 
-    # if form data is submitted (our movie detail page)
+
+    ##############################################
+    # add movie by form (our movie detail page)
     if form.validate_on_submit():
 
         # update a movie
@@ -390,7 +392,8 @@ def handle_movie(movie_id):
         return redirect("/movies")
 
 
-    # for requests coming from an ajax page (our search page)
+    ##############################################
+    # add movie with json (our search page)
     if request.headers.get('Content-Type') == "application/json":
 
         # to get actors, we need to make an api call
@@ -433,8 +436,22 @@ def handle_movie(movie_id):
     # post request is made.
 
     # get the movie data from the api
-    # movie data returned will be a dictionary
-    movie = movie_search_by_id(movie_id)
+    # movie data returned will be a dictionary containing a
+    # "Response" key.
+    #
+    # If "True", a movie was found.  if "False", an error was found.
+    try:
+        movie = movie_search_by_id(movie_id)
+    except:
+        flash("Sorry, There was an error processing your request", "danger")
+        return redirect("/movie-search")
+
+    # if the movie id doens't exist, redirect to search and flash a message
+    if movie["Response"] == "False":
+
+        flash("Sorry, we can't find the movie you are looking for.", "danger")
+        return redirect("/movie-search")
+
 
     # update our wtform data on the front end to match the movie
     # details of the movie we are viewing, so when we submit the
@@ -568,4 +585,5 @@ def search_movies():
 @app.route("/")
 def homepage():
     """Show homepage."""
+    
     return render_template("home.html")

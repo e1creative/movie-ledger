@@ -31,7 +31,7 @@ def movie_search_by_id(movie_id):
     """Make request to the external db from the """
 
     api_url = f"{API_BASE_URL}i={movie_id}"
-    
+
     api_resp = requests.get(api_url)
 
     # the api returns a reponse with json

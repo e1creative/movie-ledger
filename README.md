@@ -31,23 +31,21 @@ User Flow:
 2. User signs up for our service and is directed to the movie search page.
     - user is greeted with a note
 3. User searches for a movie using the title, or actor.
-    - this is an ajax search page
     - an api call is made to the OMDB api
-    - user can browse through the search results by page
-    - each movie/series displayed has an ajax "Add to Ledger"
-    - if the movie/series is alread in the list, an "Movie in Ledger" note is displayed
+    - user can browse through the search results page by page
+    - each movie/series displayed has an ajax "Add to My List" button
+    - if the movie/series is already in the users list, an "Movie in My List" note is displayed with a link to "My List"
+    - User can add the movie from this page (ajax)
 4. User clicks on a result and the details of that movie are displayed on a new page.
     - this will be another API call to get the movie details by ID
-5. User can add the movie from this detail page as well, or go back to view the results of the search.
+5. User can add the movie, edit the movie if the movie is aready in their list, or go back to view the results of the search.
     - this add function will be a form submission
-    - if a user adds this movie, they will be redirected to their profile page
-    - the go back function should NOT refresh the previous page, but keep the results of the that page
-6. User adds a movie from the details page and is redirectd to the "My List" page.
-7. "My List" page contains a list of the movies the the user has viewed.  Here, a users favorite movies will be displayed at the top of the page, with the remaining movies displayed below.
-    - this page will also be an ajax loaded page.
-    - sort results buttons will be ajax buttons that sort the already loaded movies.
-8. Movie Sort function (working)
-    - this will be an ajax function to reorder the already loaded movies.
+    - if a user adds this movie, they will be redirected to their My List page
+    - the go back function should NOT refresh the previous page, but keep the results of the search for that page
+6. "My List" page contains a list of the movies the the user has viewed.  Here, a users can:
+    - use the filter to view ONLY favorites
+    - users can sort the movies based on Title, Year, Date Added, or Date Viewed
+7. Movie Sort function (working)
 
 
 Technology Stack:

@@ -44,7 +44,19 @@ class UserModelTestCase(TestCase):
         """Create test client, add sample data."""
 
         # start fresh with no db entries
+        Movie.query.delete()
         User.query.delete()
+
+        # add a user to our db to test against, use User.signup 
+        u = User.signup(
+            username="TestUser", 
+            email="test@test.com", 
+            password="HASHED_PASSWORD", 
+            img_url="/static/images/test.jpg"
+            )
+        db.session.commit()
+
+        self.id = u.id
 
         self.client = app.test_client()
 
@@ -58,9 +70,10 @@ class UserModelTestCase(TestCase):
     def test_user_model(self):
         """Does the basic user model work?"""
 
+        # add a user, we already have 1 user in the db
         u = User(
-                username="testuser",
-                email="test@test.com",
+                username="TestUser2",
+                email="test2@test.com",
                 password="HASHED_PASSWORD",
                 img_url=""
             )
@@ -79,8 +92,8 @@ class UserModelTestCase(TestCase):
         """Does User.signup successfully create a new user given valid credentials?"""
 
         User.signup(
-            username="TestUser", 
-            email="test@test.com", 
+            username="TestUser2", 
+            email="test2@test.com", 
             password="HASHED_PASSWORD", 
             img_url="/static/images/test.jpg"
             )
@@ -89,9 +102,9 @@ class UserModelTestCase(TestCase):
 
         user = User.query.all()
 
-        print("\n***************")
-        print(user)
-        print("***************\n")
+        # print("\n***************")
+        # print(user)
+        # print("***************\n")
 
         self.assertEqual(user, user)
 
@@ -99,23 +112,15 @@ class UserModelTestCase(TestCase):
     def test_user_signup_fail_username(self):
         """Does User.signup fail to create a new user if any of the validations (e.g. uniqueness, non-nullable fields) fail?"""
 
-        User.signup(
-            username="TestUser", 
-            email="test@test.com", 
-            password="HASHED_PASSWORD", 
-            img_url="/static/images/test.jpg"
-            )
-
-        db.session.commit()
-        
-        u1 = User(
+        # we already have "TestUser" in our db
+        u = User(
             username="TestUser",
-            email="test1@test.com",
+            email="test@test.com",
             password="HASHED_PASSWORD"
         )
 
         # this should fail because u1.username is the same as u
-        db.session.add(u1)
+        db.session.add(u)
 
         from sqlalchemy.exc import IntegrityError
         self.assertRaises(IntegrityError, db.session.commit)
@@ -125,14 +130,7 @@ class UserModelTestCase(TestCase):
         """Does User.authenticate successfully return a user when given a valid username and password?"""
 
         # add a user to our db to test against, use User.signup to 
-        u = User.signup(
-            username="TestUser", 
-            email="test@test.com", 
-            password="HASHED_PASSWORD", 
-            img_url="/static/images/test.jpg"
-            )
-
-        db.session.commit()
+        u = User.query.get(self.id)
 
         # check User.authenticate
         self.assertEqual(User.authenticate(username="TestUser", password="HASHED_PASSWORD"), u)
@@ -141,28 +139,37 @@ class UserModelTestCase(TestCase):
     def test_user_authenticate_fail_username(self):
         """Does User.authenticate fail to return a user when the username is invalid?"""
 
-        # add a user to our db to test against, use User.signup to 
-        User.signup(
-            username="TestUser", 
-            email="test@test.com", 
-            password="HASHED_PASSWORD", 
-            img_url="/static/images/test.jpg"
-            )
-        db.session.commit()
-
+        # we already have "TestUser" in our db, so we test with a diff. username
         self.assertEqual(User.authenticate(username="TestUser2", password="HASHED_PASSWORD"), False)
 
 
     def test_user_authenticate_fail_password(self):
         """Does User.authenticate fail to return a user when the password is invalid?"""
 
-        # add a user to our db to test against, use User.signup to 
-        User.signup(
-            username="TestUser", 
-            email="test@test.com", 
-            password="HASHED_PASSWORD", 
-            img_url="/static/images/test.jpg"
+        # we already have "TestUser" in our db, so we test with a diff. pwd
+        self.assertEqual(User.authenticate(username="TestUser", password="HSHD_PWD"), False)
+
+
+    def test_relationship_on_user_model(self):
+        """Does the relationship work?
+        Can we access a user's movies throught the user model?
+        """
+
+        # add a movie with the id of our already added user
+        m = Movie(
+                imdb_id="testID456",
+                user_id=self.id,
+                title="Test Movie 2",
+                year="2023",
+                imdb_img='http://www.test-url.com/test-directory/static/images/test.jpg'
             )
+
+        db.session.add(m)
         db.session.commit()
 
-        self.assertEqual(User.authenticate(username="TestUser", password="HSHD_PWD"), False)
+        # get our already created user
+        u = User.query.get(self.id)
+
+        # we should be able to get the title of the movie through user relationship
+        self.assertEqual(u.movies[0], m)
+
